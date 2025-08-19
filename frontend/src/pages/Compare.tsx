@@ -1,171 +1,504 @@
-import { useState } from 'react'
-import { Search, GitCompare, TrendingUp } from 'lucide-react'
-import { leetcodeService, type ComparisonData } from '../services/api'
-import LoadingSpinner from '../components/LoadingSpinner'
+import { useState } from "react";
+import { Search, GitCompare, TrendingUp, Users, BarChart3 } from "lucide-react";
+// import { leetcodeService } from '../services/api';
+import LoadingSpinner from "../components/LoadingSpinner";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import InputAdornment from "@mui/material/InputAdornment";
+import Stack from "@mui/material/Stack";
+import { leetcodeColors } from "../theme/theme";
 
 const Compare = () => {
-  const [user1, setUser1] = useState('')
-  const [user2, setUser2] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [comparisonData, setComparisonData] = useState<ComparisonData | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [user1, setUser1] = useState("");
+  const [user2, setUser2] = useState("");
+  const [loading, setLoading] = useState(false);
+  // const [comparisonData, setComparisonData] = useState<ComparisonData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCompare = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!user1.trim() || !user2.trim()) return
-    
-    setLoading(true)
-    setError(null)
-    
+    e.preventDefault();
+    if (!user1.trim() || !user2.trim()) return;
+
+    setLoading(true);
+    setError(null);
+
     try {
-      const comparison = await leetcodeService.compareUsers(user1.trim(), user2.trim())
-      setComparisonData(comparison)
+      // const comparison = await leetcodeService.compareUsers(user1.trim(), user2.trim())
+      // setComparisonData(comparison)
     } catch (err) {
-      setError('Failed to compare users. Please check usernames and try again.')
-      console.error('Error comparing users:', err)
+      setError(
+        "Failed to compare users. Please check usernames and try again."
+      );
+      console.error("Error comparing users:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          User Comparison
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Compare two LeetCode users side-by-side to analyze strengths, weaknesses, and progress trends
-        </p>
-      </div>
-
-      {/* Search Section */}
-      <div className="max-w-2xl mx-auto">
-        <form onSubmit={handleCompare} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="First username"
-                value={user1}
-                onChange={(e) => setUser1(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Second username"
-                value={user2}
-                onChange={(e) => setUser2(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex items-center space-x-2 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+    <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          {/* Header */}
+          <Box sx={{ textAlign: "center", mb: 2 }}>
+            <Typography
+              variant="h3"
+              component="h1"
+              fontWeight={700}
+              color="text.primary"
+              mb={2}
+              sx={{ fontSize: { xs: "2rem", md: "2.5rem" } }}
             >
-              <GitCompare className="h-4 w-4" />
-              <span>{loading ? 'Comparing...' : 'Compare Users'}</span>
-            </button>
-          </div>
-        </form>
-      </div>
+              Compare Users
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ maxWidth: 600, mx: "auto" }}
+            >
+              Analyze performance differences between two LeetCode users
+            </Typography>
+          </Box>
 
-      {/* Loading */}
-      {loading && <LoadingSpinner />}
+          {/* Search Section */}
+          <Box sx={{ maxWidth: 800, mx: "auto", width: "100%" }}>
+            <Box
+              component="form"
+              onSubmit={handleCompare}
+              sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+            >
+              <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+                <Box sx={{ flex: 1 }}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="First username"
+                    value={user1}
+                    onChange={(e) => setUser1(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Search style={{ height: 20, width: 20 }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: 48,
+                      },
+                    }}
+                  />
+                </Box>
 
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-          {error}
-        </div>
-      )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: 40,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      bgcolor: "primary.main",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <GitCompare
+                      style={{ height: 20, width: 20, color: "white" }}
+                    />
+                  </Box>
+                </Box>
 
-      {/* Comparison Preview */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">User 1</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Total Solved:</span>
-              <span className="font-semibold">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Easy:</span>
-              <span className="font-semibold text-leetcode-easy">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Medium:</span>
-              <span className="font-semibold text-leetcode-medium">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Hard:</span>
-              <span className="font-semibold text-leetcode-hard">--</span>
-            </div>
-          </div>
-        </div>
+                <Box sx={{ flex: 1 }}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Second username"
+                    value={user2}
+                    onChange={(e) => setUser2(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Search style={{ height: 20, width: 20 }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: 48,
+                      },
+                    }}
+                  />
+                </Box>
+              </Stack>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">User 2</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Total Solved:</span>
-              <span className="font-semibold">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Easy:</span>
-              <span className="font-semibold text-leetcode-easy">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Medium:</span>
-              <span className="font-semibold text-leetcode-medium">--</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Hard:</span>
-              <span className="font-semibold text-leetcode-hard">--</span>
-            </div>
-          </div>
-        </div>
-      </div>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={loading}
+                  startIcon={<GitCompare style={{ height: 20, width: 20 }} />}
+                  sx={{
+                    px: 4,
+                    py: 1.5,
+                    fontWeight: 600,
+                    textTransform: "none",
+                    height: 48,
+                    minWidth: 160,
+                  }}
+                >
+                  {loading ? "Comparing..." : "Compare"}
+                </Button>
+              </Box>
+            </Box>
+          </Box>
 
-      {/* Features Overview */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          Comparison Features
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <TrendingUp className="h-6 w-6 text-blue-600" />
-            </div>
-            <h3 className="font-semibold text-gray-900">Progress Trends</h3>
-            <p className="text-sm text-gray-600">Track solving patterns over time</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <GitCompare className="h-6 w-6 text-blue-600" />
-            </div>
-            <h3 className="font-semibold text-gray-900">Side-by-Side Analysis</h3>
-            <p className="text-sm text-gray-600">Direct performance comparison</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Search className="h-6 w-6 text-blue-600" />
-            </div>
-            <h3 className="font-semibold text-gray-900">Detailed Insights</h3>
-            <p className="text-sm text-gray-600">Identify strengths and gaps</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+          {/* Loading */}
+          {loading && <LoadingSpinner />}
 
-export default Compare
+          {/* Error Message */}
+          {error && (
+            <Alert severity="error" sx={{ maxWidth: 600, mx: "auto" }}>
+              {error}
+            </Alert>
+          )}
+
+          {/* Comparison Preview Cards */}
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={3}
+            sx={{ maxWidth: 1000, mx: "auto" }}
+          >
+            <Card sx={{ flex: 1 }}>
+              <CardContent sx={{ p: 4 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    mb: 3,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      bgcolor: "primary.main",
+                      borderRadius: 1.5,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography variant="h6" color="white" fontWeight={700}>
+                      1
+                    </Typography>
+                  </Box>
+                  <Typography variant="h5" fontWeight={600}>
+                    {user1 || "User 1"}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" mb={1}>
+                      Total Problems Solved
+                    </Typography>
+                    <Typography variant="h4" fontWeight={700}>
+                      --
+                    </Typography>
+                  </Box>
+
+                  <Stack direction="row" spacing={2}>
+                    <Box sx={{ textAlign: "center", flex: 1 }}>
+                      <Typography
+                        variant="h5"
+                        fontWeight={700}
+                        sx={{ color: leetcodeColors.easy }}
+                      >
+                        --
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Easy
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: "center", flex: 1 }}>
+                      <Typography
+                        variant="h5"
+                        fontWeight={700}
+                        sx={{ color: leetcodeColors.medium }}
+                      >
+                        --
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Medium
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: "center", flex: 1 }}>
+                      <Typography
+                        variant="h5"
+                        fontWeight={700}
+                        sx={{ color: leetcodeColors.hard }}
+                      >
+                        --
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Hard
+                      </Typography>
+                    </Box>
+                  </Stack>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      pt: 2,
+                      borderTop: "1px solid",
+                      borderColor: "divider",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        Acceptance Rate
+                      </Typography>
+                      <Typography variant="h6" fontWeight={600}>
+                        --%
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: "right" }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Ranking
+                      </Typography>
+                      <Typography variant="h6" fontWeight={600}>
+                        --
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+
+            <Card sx={{ flex: 1 }}>
+              <CardContent sx={{ p: 4 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    mb: 3,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      bgcolor: "secondary.main",
+                      borderRadius: 1.5,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography variant="h6" color="white" fontWeight={700}>
+                      2
+                    </Typography>
+                  </Box>
+                  <Typography variant="h5" fontWeight={600}>
+                    {user2 || "User 2"}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" mb={1}>
+                      Total Problems Solved
+                    </Typography>
+                    <Typography variant="h4" fontWeight={700}>
+                      --
+                    </Typography>
+                  </Box>
+
+                  <Stack direction="row" spacing={2}>
+                    <Box sx={{ textAlign: "center", flex: 1 }}>
+                      <Typography
+                        variant="h5"
+                        fontWeight={700}
+                        sx={{ color: leetcodeColors.easy }}
+                      >
+                        --
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Easy
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: "center", flex: 1 }}>
+                      <Typography
+                        variant="h5"
+                        fontWeight={700}
+                        sx={{ color: leetcodeColors.medium }}
+                      >
+                        --
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Medium
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: "center", flex: 1 }}>
+                      <Typography
+                        variant="h5"
+                        fontWeight={700}
+                        sx={{ color: leetcodeColors.hard }}
+                      >
+                        --
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Hard
+                      </Typography>
+                    </Box>
+                  </Stack>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      pt: 2,
+                      borderTop: "1px solid",
+                      borderColor: "divider",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        Acceptance Rate
+                      </Typography>
+                      <Typography variant="h6" fontWeight={600}>
+                        --%
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: "right" }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Ranking
+                      </Typography>
+                      <Typography variant="h6" fontWeight={600}>
+                        --
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Stack>
+
+          {/* Features Overview */}
+          <Card sx={{ bgcolor: "background.paper" }}>
+            <CardContent sx={{ p: 4, textAlign: "center" }}>
+              <Typography
+                variant="h4"
+                fontWeight={700}
+                color="text.primary"
+                mb={3}
+              >
+                Comparison Features
+              </Typography>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={4}
+                sx={{ maxWidth: 800, mx: "auto" }}
+              >
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                  <Box
+                    sx={{
+                      width: 64,
+                      height: 64,
+                      bgcolor: "primary.main",
+                      borderRadius: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      mx: "auto",
+                      mb: 2,
+                    }}
+                  >
+                    <TrendingUp
+                      style={{ height: 28, width: 28, color: "white" }}
+                    />
+                  </Box>
+                  <Typography variant="h6" fontWeight={600} mb={1}>
+                    Performance Metrics
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Side-by-side analysis of solving patterns
+                  </Typography>
+                </Box>
+
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                  <Box
+                    sx={{
+                      width: 64,
+                      height: 64,
+                      bgcolor: "secondary.main",
+                      borderRadius: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      mx: "auto",
+                      mb: 2,
+                    }}
+                  >
+                    <BarChart3
+                      style={{ height: 28, width: 28, color: "white" }}
+                    />
+                  </Box>
+                  <Typography variant="h6" fontWeight={600} mb={1}>
+                    Skill Analysis
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Compare strengths across different topics
+                  </Typography>
+                </Box>
+
+                <Box sx={{ textAlign: "center", flex: 1 }}>
+                  <Box
+                    sx={{
+                      width: 64,
+                      height: 64,
+                      bgcolor: "#ff9800",
+                      borderRadius: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      mx: "auto",
+                      mb: 2,
+                    }}
+                  >
+                    <Users style={{ height: 28, width: 28, color: "white" }} />
+                  </Box>
+                  <Typography variant="h6" fontWeight={600} mb={1}>
+                    Progress Tracking
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Track improvement over time
+                  </Typography>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
+    </Box>
+  );
+};
+
+export default Compare;

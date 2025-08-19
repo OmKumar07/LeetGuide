@@ -1,158 +1,313 @@
-import { useState } from 'react'
-import { Lightbulb, Target, Brain, Zap } from 'lucide-react'
+import { useState } from "react";
+import { Lightbulb, Target, Brain, Zap } from "lucide-react";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Paper from "@mui/material/Paper";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 
 const Recommendations = () => {
-  const [username, setUsername] = useState('')
-  const [topic, setTopic] = useState('')
-  const [difficulty, setDifficulty] = useState('all')
-  const [loading, setLoading] = useState(false)
+  const [username, setUsername] = useState("");
+  const [topic, setTopic] = useState("");
+  const [difficulty, setDifficulty] = useState("all");
+  const [loading, setLoading] = useState(false);
 
   const handleGetRecommendations = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!username.trim()) return
-    
-    setLoading(true)
+    e.preventDefault();
+    if (!username.trim()) return;
+
+    setLoading(true);
     // TODO: Implement API call to get recommendations
-    setTimeout(() => setLoading(false), 2000) // Simulate API call
-  }
+    setTimeout(() => setLoading(false), 2000); // Simulate API call
+  };
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Smart Recommendations
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Get AI-powered problem recommendations based on your solving patterns and areas for improvement
-        </p>
-      </div>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {/* Header */}
+        <Box sx={{ textAlign: "center", mb: 2 }}>
+          <Typography
+            variant="h3"
+            component="h1"
+            fontWeight={700}
+            color="text.primary"
+            mb={2}
+          >
+            Smart Recommendations
+          </Typography>
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ maxWidth: 600, mx: "auto" }}
+          >
+            Get AI-powered problem recommendations based on your solving
+            patterns and areas for improvement
+          </Typography>
+        </Box>
 
-      {/* Input Section */}
-      <div className="max-w-2xl mx-auto">
-        <form onSubmit={handleGetRecommendations} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="LeetCode username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-            <input
-              type="text"
-              placeholder="Topic (optional)"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4">
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              aria-label="Select difficulty level"
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+        {/* Input Section */}
+        <Box sx={{ maxWidth: 600, mx: "auto", width: "100%" }}>
+          <Box
+            component="form"
+            onSubmit={handleGetRecommendations}
+            sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                flexDirection: { xs: "column", md: "row" },
+              }}
             >
-              <option value="all">All Difficulties</option>
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-            
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex items-center justify-center space-x-2 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="LeetCode username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Topic (optional)"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+              />
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                flexDirection: { xs: "column", sm: "row" },
+              }}
             >
-              <Lightbulb className="h-4 w-4" />
-              <span>{loading ? 'Analyzing...' : 'Get Recommendations'}</span>
-            </button>
-          </div>
-        </form>
-      </div>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel>Difficulty Level</InputLabel>
+                <Select
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                  label="Difficulty Level"
+                >
+                  <MenuItem value="all">All Difficulties</MenuItem>
+                  <MenuItem value="easy">Easy</MenuItem>
+                  <MenuItem value="medium">Medium</MenuItem>
+                  <MenuItem value="hard">Hard</MenuItem>
+                </Select>
+              </FormControl>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={loading}
+                startIcon={<Lightbulb style={{ height: 20, width: 20 }} />}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontWeight: 600,
+                  textTransform: "none",
+                  minWidth: 200,
+                }}
+              >
+                {loading ? "Analyzing..." : "Get Recommendations"}
+              </Button>
+            </Box>
+          </Box>
+        </Box>
 
-      {/* Recommendation Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <div className="flex items-center space-x-3 mb-4">
-            <Target className="h-6 w-6 text-red-500" />
-            <h3 className="text-lg font-semibold text-gray-900">Weakness-Based</h3>
-          </div>
-          <p className="text-gray-600 text-sm mb-4">
-            Problems targeting your weakest topics and patterns
-          </p>
-          <div className="space-y-2">
-            <div className="text-sm text-gray-500">Coming soon...</div>
-          </div>
-        </div>
+        {/* Recommendation Categories */}
+        <Box
+          sx={{
+            display: "flex",
+            gap: 3,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          <Card elevation={3} sx={{ p: 3, flex: "1 1 300px", maxWidth: 400 }}>
+            <CardContent sx={{ p: 0 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+              >
+                <Target style={{ height: 24, width: 24, color: "#f44336" }} />
+                <Typography variant="h6" fontWeight={600} color="text.primary">
+                  Weakness-Based
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Problems targeting your weakest topics and patterns
+              </Typography>
+              <Typography variant="caption" color="text.disabled">
+                Coming soon...
+              </Typography>
+            </CardContent>
+          </Card>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <div className="flex items-center space-x-3 mb-4">
-            <Brain className="h-6 w-6 text-blue-500" />
-            <h3 className="text-lg font-semibold text-gray-900">Skill Building</h3>
-          </div>
-          <p className="text-gray-600 text-sm mb-4">
-            Progressive problems to build specific algorithm skills
-          </p>
-          <div className="space-y-2">
-            <div className="text-sm text-gray-500">Coming soon...</div>
-          </div>
-        </div>
+          <Card elevation={3} sx={{ p: 3, flex: "1 1 300px", maxWidth: 400 }}>
+            <CardContent sx={{ p: 0 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+              >
+                <Brain style={{ height: 24, width: 24, color: "#9c27b0" }} />
+                <Typography variant="h6" fontWeight={600} color="text.primary">
+                  Skill-Building
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Progressive problems to build specific algorithm skills
+              </Typography>
+              <Typography variant="caption" color="text.disabled">
+                Coming soon...
+              </Typography>
+            </CardContent>
+          </Card>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <div className="flex items-center space-x-3 mb-4">
-            <Zap className="h-6 w-6 text-yellow-500" />
-            <h3 className="text-lg font-semibold text-gray-900">Quick Wins</h3>
-          </div>
-          <p className="text-gray-600 text-sm mb-4">
-            Problems similar to ones you've solved for confidence building
-          </p>
-          <div className="space-y-2">
-            <div className="text-sm text-gray-500">Coming soon...</div>
-          </div>
-        </div>
-      </div>
+          <Card elevation={3} sx={{ p: 3, flex: "1 1 300px", maxWidth: 400 }}>
+            <CardContent sx={{ p: 0 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+              >
+                <Zap style={{ height: 24, width: 24, color: "#ff9800" }} />
+                <Typography variant="h6" fontWeight={600} color="text.primary">
+                  Challenge Mode
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Advanced problems to push your problem-solving limits
+              </Typography>
+              <Typography variant="caption" color="text.disabled">
+                Coming soon...
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
 
-      {/* How It Works */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          How Smart Recommendations Work
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-lg font-bold text-purple-600">1</span>
-            </div>
-            <h3 className="font-semibold text-gray-900">Analyze Profile</h3>
-            <p className="text-sm text-gray-600">Study your solving patterns and performance</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-lg font-bold text-purple-600">2</span>
-            </div>
-            <h3 className="font-semibold text-gray-900">Identify Gaps</h3>
-            <p className="text-sm text-gray-600">Find weak areas and improvement opportunities</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-lg font-bold text-purple-600">3</span>
-            </div>
-            <h3 className="font-semibold text-gray-900">AI Processing</h3>
-            <p className="text-sm text-gray-600">Use NLP to match problems to your needs</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-lg font-bold text-purple-600">4</span>
-            </div>
-            <h3 className="font-semibold text-gray-900">Personalized Suggestions</h3>
-            <p className="text-sm text-gray-600">Get curated problem recommendations</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+        {/* Features Overview */}
+        <Paper
+          elevation={2}
+          sx={{
+            p: 4,
+            textAlign: "center",
+            background: "linear-gradient(45deg, #e8f5e9 30%, #f3e5f5 90%)",
+          }}
+        >
+          <Typography variant="h4" fontWeight={700} color="text.primary" mb={3}>
+            AI-Powered Insights
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            mb={4}
+            sx={{ maxWidth: 600, mx: "auto" }}
+          >
+            Our recommendation engine analyzes your solving patterns, identifies
+            knowledge gaps, and suggests optimal next problems for skill
+            development.
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 4,
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            <Box sx={{ textAlign: "center", maxWidth: 200 }}>
+              <Box
+                sx={{
+                  width: 60,
+                  height: 60,
+                  bgcolor: "#e8f5e9",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mx: "auto",
+                  mb: 2,
+                }}
+              >
+                <Target style={{ height: 28, width: 28, color: "#4caf50" }} />
+              </Box>
+              <Typography
+                variant="h6"
+                fontWeight={600}
+                color="text.primary"
+                mb={1}
+              >
+                Personalized
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Tailored to your unique solving style
+              </Typography>
+            </Box>
+            <Box sx={{ textAlign: "center", maxWidth: 200 }}>
+              <Box
+                sx={{
+                  width: 60,
+                  height: 60,
+                  bgcolor: "#f3e5f5",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mx: "auto",
+                  mb: 2,
+                }}
+              >
+                <Brain style={{ height: 28, width: 28, color: "#9c27b0" }} />
+              </Box>
+              <Typography
+                variant="h6"
+                fontWeight={600}
+                color="text.primary"
+                mb={1}
+              >
+                Adaptive
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Evolves with your progress
+              </Typography>
+            </Box>
+            <Box sx={{ textAlign: "center", maxWidth: 200 }}>
+              <Box
+                sx={{
+                  width: 60,
+                  height: 60,
+                  bgcolor: "#fff3e0",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mx: "auto",
+                  mb: 2,
+                }}
+              >
+                <Zap style={{ height: 28, width: 28, color: "#ff9800" }} />
+              </Box>
+              <Typography
+                variant="h6"
+                fontWeight={600}
+                color="text.primary"
+                mb={1}
+              >
+                Efficient
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Optimal learning path
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
+  );
+};
 
-export default Recommendations
+export default Recommendations;

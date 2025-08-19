@@ -1,53 +1,45 @@
-import { Doughnut } from 'react-chartjs-2'
+import { Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
   Legend,
   type ChartOptions,
-} from 'chart.js'
+} from "chart.js";
+import { Box } from "@mui/material";
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface DifficultyChartProps {
-  easy: number
-  medium: number
-  hard: number
-  className?: string
+  easy: number;
+  medium: number;
+  hard: number;
 }
 
-const DifficultyChart = ({ easy, medium, hard, className = '' }: DifficultyChartProps) => {
+const DifficultyChart = ({ easy, medium, hard }: DifficultyChartProps) => {
   const data = {
-    labels: ['Easy', 'Medium', 'Hard'],
+    labels: ["Easy", "Medium", "Hard"],
     datasets: [
       {
         data: [easy, medium, hard],
         backgroundColor: [
-          '#00b8a3', // LeetCode easy color
-          '#ffb800', // LeetCode medium color
-          '#ff375f', // LeetCode hard color
+          "#00b8a3", // LeetCode easy color
+          "#ffb800", // LeetCode medium color
+          "#ff375f", // LeetCode hard color
         ],
-        borderColor: [
-          '#00a693',
-          '#e6a600',
-          '#e6334f',
-        ],
+        borderColor: ["#00a693", "#e6a600", "#e6334f"],
         borderWidth: 2,
-        hoverBackgroundColor: [
-          '#00c9b3',
-          '#ffc333',
-          '#ff5577',
-        ],
+        hoverBackgroundColor: ["#00c9b3", "#ffc333", "#ff5577"],
       },
     ],
-  }
+  };
 
-  const options: ChartOptions<'doughnut'> = {
+  const options: ChartOptions<"doughnut"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'bottom',
+        position: "bottom",
         labels: {
           padding: 20,
           font: {
@@ -59,22 +51,23 @@ const DifficultyChart = ({ easy, medium, hard, className = '' }: DifficultyChart
       tooltip: {
         callbacks: {
           label: (context) => {
-            const label = context.label || ''
-            const value = context.parsed
-            const total = easy + medium + hard
-            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0'
-            return `${label}: ${value} (${percentage}%)`
+            const label = context.label || "";
+            const value = context.parsed;
+            const total = easy + medium + hard;
+            const percentage =
+              total > 0 ? ((value / total) * 100).toFixed(1) : "0";
+            return `${label}: ${value} (${percentage}%)`;
           },
         },
       },
     },
-  }
+  };
 
   return (
-    <div className={`relative ${className}`}>
+    <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
       <Doughnut data={data} options={options} />
-    </div>
-  )
-}
+    </Box>
+  );
+};
 
-export default DifficultyChart
+export default DifficultyChart;
