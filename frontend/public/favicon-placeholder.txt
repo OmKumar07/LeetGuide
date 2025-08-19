@@ -1,0 +1,2 @@
+<!-- This is a placeholder for favicon.ico - you would typically generate this from the SVG -->
+<!-- For now, I'll create an additional favicon.ico reference in the HTML -->

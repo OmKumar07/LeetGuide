@@ -8,6 +8,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
   type ChartOptions,
 } from "chart.js";
 import { Box } from "@mui/material";
@@ -19,27 +20,32 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 interface ProgressChartProps {
-  submissionCalendar: Record<string, number>;
+  submissionCalendar: Array<{
+    date: string;
+    count: number;
+  }>;
 }
 
 const ProgressChart = ({ submissionCalendar }: ProgressChartProps) => {
   // Convert calendar data to chart format
-  const sortedDates = Object.keys(submissionCalendar).sort();
-  const last30Days = sortedDates.slice(-30);
+  const last30Days = submissionCalendar
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(-30);
 
   const data = {
-    labels: last30Days.map((date) => {
-      const d = new Date(date);
+    labels: last30Days.map((item) => {
+      const d = new Date(item.date);
       return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     }),
     datasets: [
       {
         label: "Problems Solved",
-        data: last30Days.map((date) => submissionCalendar[date] || 0),
+        data: last30Days.map((item) => item.count),
         borderColor: "rgba(59, 130, 246, 1)",
         backgroundColor: "rgba(59, 130, 246, 0.1)",
         borderWidth: 2,

@@ -39,16 +39,78 @@ export interface UserStats {
   mediumSolved: number;
   hardSolved: number;
   acceptanceRate: string;
+  overallAcceptanceRate: string;
+  totalAttempts: number;
   ranking: number;
   contributionPoints: number;
+
+  // Enhanced streak and activity data
+  streakData: {
+    currentStreak: number;
+    longestStreak: number;
+    totalActiveDays: number;
+    averageSubmissionsPerDay: string;
+  };
+
+  // Language proficiency
+  languageStats: Array<{
+    languageName: string;
+    problemsSolved: number;
+  }>;
+
+  // Recent activity
+  recentSubmissions: Array<{
+    title: string;
+    titleSlug: string;
+    timestamp: string;
+    status: string;
+    language: string;
+  }>;
+
+  // Badges and achievements
+  badges: Array<{
+    id: string;
+    displayName: string;
+    icon: string;
+    creationDate: string;
+  }>;
+
   submissionCalendar: Array<{
     date: string;
     count: number;
   }>;
+
   skillStats: Array<{
     name: string;
     solved: number;
   }>;
+
+  // Contest performance
+  contestHistory: Array<{
+    attended: boolean;
+    trendDirection: string;
+    problemsSolved: number;
+    totalProblems: number;
+    finishTimeInSeconds: number;
+    rating: number;
+    ranking: number;
+    contest: {
+      title: string;
+      startTime: string;
+    };
+  }>;
+
+  contestRanking: {
+    attendedContestsCount: number;
+    rating: number;
+    globalRanking: number;
+    totalParticipants: number;
+    topPercentage: number;
+    badge?: {
+      name: string;
+    };
+  } | null;
+
   profile?: {
     realName?: string;
     avatar?: string;
@@ -56,6 +118,11 @@ export interface UserStats {
     school?: string;
     company?: string;
     country?: string;
+    websites?: string[];
+    skillTags?: string[];
+    starRating?: number;
+    postViewCount?: number;
+    reputationChange?: number;
   };
 }
 
@@ -80,6 +147,28 @@ export interface Recommendation {
   acRate?: number;
   likes?: number;
   dislikes?: number;
+  estimatedTime?: number;
+  priority?: "High" | "Medium" | "Low";
+}
+
+export interface LearningPath {
+  currentPath: {
+    phase: string;
+    focus: string;
+    recommendedDaily: number;
+    targetSkills: string[];
+    description: string;
+  };
+  weakAreas: string[];
+  totalSolved: number;
+  progressAnalysis: {
+    beginnerPhase: boolean;
+    intermediatePhase: boolean;
+    advancedPhase: boolean;
+    currentPhase: string;
+  };
+  solvedCount: number;
+  recommendations: Recommendation[];
 }
 
 // LeetCode API service functions
@@ -112,7 +201,16 @@ export const leetcodeService = {
     }
   },
 
-  // Get recommendations
+  // Get learning path analysis
+  async getLearningPath(username: string): Promise<LearningPath> {
+    try {
+      const response = await api.post("/api/learning-path", { username });
+      return response.data;
+    } catch {
+      console.warn("Using mock learning path data");
+      return getMockLearningPath(username);
+    }
+  },
   async getRecommendations(
     username: string,
     topic?: string,
@@ -142,8 +240,57 @@ function getMockUserStats(username: string): UserStats {
     mediumSolved: 156,
     hardSolved: 41,
     acceptanceRate: "68.5",
+    overallAcceptanceRate: "65.2",
+    totalAttempts: 525,
     ranking: 125432,
     contributionPoints: 1840,
+
+    streakData: {
+      currentStreak: 5,
+      longestStreak: 23,
+      totalActiveDays: 127,
+      averageSubmissionsPerDay: "2.7",
+    },
+
+    languageStats: [
+      { languageName: "Python", problemsSolved: 156 },
+      { languageName: "Java", problemsSolved: 89 },
+      { languageName: "C++", problemsSolved: 67 },
+      { languageName: "JavaScript", problemsSolved: 30 },
+    ],
+
+    recentSubmissions: [
+      {
+        title: "Two Sum",
+        titleSlug: "two-sum",
+        timestamp: "1692384000",
+        status: "Accepted",
+        language: "Python",
+      },
+      {
+        title: "Valid Parentheses",
+        titleSlug: "valid-parentheses",
+        timestamp: "1692297600",
+        status: "Accepted",
+        language: "Java",
+      },
+    ],
+
+    badges: [
+      {
+        id: "1",
+        displayName: "50 Days Badge",
+        icon: "🏆",
+        creationDate: "2024-01-15",
+      },
+      {
+        id: "2",
+        displayName: "100 Problems",
+        icon: "💯",
+        creationDate: "2024-02-20",
+      },
+    ],
+
     submissionCalendar: [
       { date: "2024-01-01", count: 3 },
       { date: "2024-01-02", count: 1 },
@@ -151,17 +298,69 @@ function getMockUserStats(username: string): UserStats {
       { date: "2024-01-04", count: 0 },
       { date: "2024-01-05", count: 4 },
     ],
+
     skillStats: [
       { name: "Array", solved: 89 },
       { name: "Dynamic Programming", solved: 34 },
       { name: "Tree", solved: 28 },
       { name: "Hash Table", solved: 45 },
     ],
+
+    contestHistory: [
+      {
+        attended: true,
+        trendDirection: "UP",
+        problemsSolved: 3,
+        totalProblems: 4,
+        finishTimeInSeconds: 5400,
+        rating: 1650,
+        ranking: 1250,
+        contest: { title: "Weekly Contest 350", startTime: "2024-01-14" },
+      },
+    ],
+
+    contestRanking: {
+      attendedContestsCount: 15,
+      rating: 1650,
+      globalRanking: 45230,
+      totalParticipants: 120000,
+      topPercentage: 37.7,
+      badge: { name: "Specialist" },
+    },
+
     profile: {
       realName: username,
       company: "Tech Corp",
       country: "United States",
+      websites: ["https://github.com/user"],
+      skillTags: ["Python", "Algorithms", "Data Structures"],
+      starRating: 4,
+      postViewCount: 1250,
+      reputationChange: 50,
     },
+  };
+}
+
+function getMockLearningPath(_username: string): LearningPath {
+  return {
+    currentPath: {
+      phase: "Skill Expansion",
+      focus: "Medium problems with varied topics",
+      recommendedDaily: 1,
+      targetSkills: ["Dynamic Programming", "Tree", "Graph", "Greedy"],
+      description:
+        "Expand your problem-solving toolkit with intermediate concepts",
+    },
+    weakAreas: ["Dynamic Programming", "Graph"],
+    totalSolved: 342,
+    progressAnalysis: {
+      beginnerPhase: true,
+      intermediatePhase: true,
+      advancedPhase: false,
+      currentPhase: "Intermediate",
+    },
+    solvedCount: 342,
+    recommendations: getMockRecommendations(),
   };
 }
 
@@ -187,33 +386,42 @@ function getMockRecommendations(): Recommendation[] {
       slug: "longest-substring-without-repeating-characters",
       difficulty: "Medium",
       topicTags: ["Hash Table", "String", "Sliding Window"],
-      reason: "Improve your sliding window technique",
+      reason:
+        "🎯 Targets your weak area in Hash Table! This medium problem (33.8% acceptance) will help strengthen these skills.",
       similarity: 0.85,
       url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
       acRate: 33.8,
       likes: 32451,
+      estimatedTime: 30,
+      priority: "High",
     },
     {
       title: "Binary Tree Inorder Traversal",
       slug: "binary-tree-inorder-traversal",
       difficulty: "Easy",
       topicTags: ["Stack", "Tree", "Depth-First Search"],
-      reason: "Strengthen tree traversal fundamentals",
+      reason:
+        "✅ High confidence problem! 74.4% acceptance rate in Tree - great for building momentum.",
       similarity: 0.78,
       url: "https://leetcode.com/problems/binary-tree-inorder-traversal/",
       acRate: 74.4,
       likes: 11234,
+      estimatedTime: 12,
+      priority: "Medium",
     },
     {
       title: "Word Ladder",
       slug: "word-ladder",
       difficulty: "Hard",
       topicTags: ["Hash Table", "String", "Breadth-First Search"],
-      reason: "Challenge yourself with graph algorithms",
+      reason:
+        "🔥 Elite challenge! Only 23.1% solve this Graph problem - excellent for skill mastery.",
       similarity: 0.72,
       url: "https://leetcode.com/problems/word-ladder/",
       acRate: 23.1,
       likes: 8765,
+      estimatedTime: 90,
+      priority: "Low",
     },
   ];
 }

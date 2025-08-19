@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 import { ThemeContextProvider } from "./theme/ThemeContext";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
@@ -6,6 +7,11 @@ import Compare from "./pages/Compare";
 import Box from "@mui/material/Box";
 
 function App() {
+  useEffect(() => {
+    // Set the default title
+    document.title = "LeetGuide - LeetCode Analytics Dashboard";
+  }, []);
+
   return (
     <ThemeContextProvider>
       <Router>

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, GitCompare, TrendingUp, Users, BarChart3 } from "lucide-react";
-// import { leetcodeService } from '../services/api';
+import { leetcodeService, type ComparisonData } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -18,8 +18,18 @@ const Compare = () => {
   const [user1, setUser1] = useState("");
   const [user2, setUser2] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [comparisonData, setComparisonData] = useState<ComparisonData | null>(null);
+  const [comparisonData, setComparisonData] = useState<ComparisonData | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
+
+  // Set page title
+  useEffect(() => {
+    document.title = "Compare Users - LeetGuide";
+    return () => {
+      document.title = "LeetGuide - LeetCode Analytics Dashboard";
+    };
+  }, []);
 
   const handleCompare = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,10 +37,29 @@ const Compare = () => {
 
     setLoading(true);
     setError(null);
+    setComparisonData(null);
 
     try {
-      // const comparison = await leetcodeService.compareUsers(user1.trim(), user2.trim())
-      // setComparisonData(comparison)
+      const comparison = await leetcodeService.compareUsers(
+        user1.trim(),
+        user2.trim()
+      );
+
+      // Calculate total solved for each user
+      const user1Total =
+        comparison.user1.easySolved +
+        comparison.user1.mediumSolved +
+        comparison.user1.hardSolved;
+      const user2Total =
+        comparison.user2.easySolved +
+        comparison.user2.mediumSolved +
+        comparison.user2.hardSolved;
+
+      setComparisonData({
+        ...comparison,
+        user1: { ...comparison.user1, totalSolved: user1Total },
+        user2: { ...comparison.user2, totalSolved: user2Total },
+      });
     } catch (err) {
       setError(
         "Failed to compare users. Please check usernames and try again."
@@ -218,7 +247,7 @@ const Compare = () => {
                       Total Problems Solved
                     </Typography>
                     <Typography variant="h4" fontWeight={700}>
-                      --
+                      {comparisonData?.user1?.totalSolved || "--"}
                     </Typography>
                   </Box>
 
@@ -229,7 +258,7 @@ const Compare = () => {
                         fontWeight={700}
                         sx={{ color: leetcodeColors.easy }}
                       >
-                        --
+                        {comparisonData?.user1?.easySolved || "--"}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Easy
@@ -241,7 +270,7 @@ const Compare = () => {
                         fontWeight={700}
                         sx={{ color: leetcodeColors.medium }}
                       >
-                        --
+                        {comparisonData?.user1?.mediumSolved || "--"}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Medium
@@ -253,7 +282,7 @@ const Compare = () => {
                         fontWeight={700}
                         sx={{ color: leetcodeColors.hard }}
                       >
-                        --
+                        {comparisonData?.user1?.hardSolved || "--"}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Hard
@@ -275,7 +304,9 @@ const Compare = () => {
                         Acceptance Rate
                       </Typography>
                       <Typography variant="h6" fontWeight={600}>
-                        --%
+                        {comparisonData?.user1?.acceptanceRate
+                          ? `${comparisonData.user1.acceptanceRate}%`
+                          : "--%"}
                       </Typography>
                     </Box>
                     <Box sx={{ textAlign: "right" }}>
@@ -283,7 +314,8 @@ const Compare = () => {
                         Ranking
                       </Typography>
                       <Typography variant="h6" fontWeight={600}>
-                        --
+                        {comparisonData?.user1?.ranking?.toLocaleString() ||
+                          "--"}
                       </Typography>
                     </Box>
                   </Box>
@@ -327,7 +359,7 @@ const Compare = () => {
                       Total Problems Solved
                     </Typography>
                     <Typography variant="h4" fontWeight={700}>
-                      --
+                      {comparisonData?.user2?.totalSolved || "--"}
                     </Typography>
                   </Box>
 
@@ -338,7 +370,7 @@ const Compare = () => {
                         fontWeight={700}
                         sx={{ color: leetcodeColors.easy }}
                       >
-                        --
+                        {comparisonData?.user2?.easySolved || "--"}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Easy
@@ -350,7 +382,7 @@ const Compare = () => {
                         fontWeight={700}
                         sx={{ color: leetcodeColors.medium }}
                       >
-                        --
+                        {comparisonData?.user2?.mediumSolved || "--"}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Medium
@@ -362,7 +394,7 @@ const Compare = () => {
                         fontWeight={700}
                         sx={{ color: leetcodeColors.hard }}
                       >
-                        --
+                        {comparisonData?.user2?.hardSolved || "--"}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Hard
@@ -384,7 +416,9 @@ const Compare = () => {
                         Acceptance Rate
                       </Typography>
                       <Typography variant="h6" fontWeight={600}>
-                        --%
+                        {comparisonData?.user2?.acceptanceRate
+                          ? `${comparisonData.user2.acceptanceRate}%`
+                          : "--%"}
                       </Typography>
                     </Box>
                     <Box sx={{ textAlign: "right" }}>
@@ -392,7 +426,8 @@ const Compare = () => {
                         Ranking
                       </Typography>
                       <Typography variant="h6" fontWeight={600}>
-                        --
+                        {comparisonData?.user2?.ranking?.toLocaleString() ||
+                          "--"}
                       </Typography>
                     </Box>
                   </Box>

@@ -1,0 +1,20 @@
+{
+  "name": "LeetGuide - LeetCode Analytics Dashboard",
+  "short_name": "LeetGuide",
+  "description": "Your personal LeetCode analytics dashboard with progress tracking, performance insights, and AI-powered problem recommendations",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "developer", "education"],
+  "lang": "en"
+}

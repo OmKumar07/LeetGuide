@@ -1,21 +1,11 @@
-import { useState } from "react";
-import {
-  Search,
-  TrendingUp,
-  Target,
-  Lightbulb,
-  ExternalLink,
-  Trophy,
-  Zap,
-} from "lucide-react";
-import {
-  leetcodeService,
-  type UserStats,
-  type Recommendation,
-} from "../services/api";
+import { useState, useEffect } from "react";
+import { Search, TrendingUp, Target, Lightbulb, Trophy } from "lucide-react";
+import { leetcodeService, type UserStats } from "../services/api";
 import DifficultyChart from "../components/charts/DifficultyChart";
 import SkillsChart from "../components/charts/SkillsChart";
 import ProgressChart from "../components/charts/ProgressChart";
+import ProfileAnalysis from "../components/ProfileAnalysis";
+import SmartRecommendations from "../components/SmartRecommendations";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -27,22 +17,21 @@ import CardContent from "@mui/material/CardContent";
 import InputAdornment from "@mui/material/InputAdornment";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import { leetcodeColors } from "../theme/theme";
 
 const Dashboard = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [recTopic, setRecTopic] = useState("");
-  const [recDifficulty, setRecDifficulty] = useState("");
+
+  // Set page title
+  useEffect(() => {
+    document.title = "Dashboard - LeetGuide";
+    return () => {
+      document.title = "LeetGuide - LeetCode Analytics Dashboard";
+    };
+  }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,11 +42,15 @@ const Dashboard = () => {
 
     try {
       const stats = await leetcodeService.getUserStats(username.trim());
-      setUserStats(stats);
 
-      // Fetch recommendations automatically
-      const recs = await leetcodeService.getRecommendations(username.trim());
-      setRecommendations(recs);
+      // Calculate total solved for consistency
+      const totalSolved =
+        stats.easySolved + stats.mediumSolved + stats.hardSolved;
+
+      setUserStats({
+        ...stats,
+        totalSolved: totalSolved,
+      });
     } catch (err) {
       setError(
         "Failed to fetch user data. Please check the username and try again."
@@ -65,34 +58,6 @@ const Dashboard = () => {
       console.error("Error fetching user stats:", err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleGetRecommendations = async () => {
-    if (!userStats) return;
-
-    try {
-      const recs = await leetcodeService.getRecommendations(
-        userStats.username,
-        recTopic || undefined,
-        recDifficulty || undefined
-      );
-      setRecommendations(recs);
-    } catch (err) {
-      console.error("Error fetching recommendations:", err);
-    }
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "Easy":
-        return leetcodeColors.easy;
-      case "Medium":
-        return leetcodeColors.medium;
-      case "Hard":
-        return leetcodeColors.hard;
-      default:
-        return "#666";
     }
   };
 
@@ -237,7 +202,9 @@ const Dashboard = () => {
                         fontWeight={700}
                         color="primary.main"
                       >
-                        {userStats.totalSolved}
+                        {userStats.easySolved +
+                          userStats.mediumSolved +
+                          userStats.hardSolved}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Total Solved
@@ -310,7 +277,12 @@ const Dashboard = () => {
                   <Card sx={{ flex: 1 }}>
                     <CardContent sx={{ p: 3 }}>
                       <Box sx={{ height: 300 }}>
-                        <SkillsChart skills={userStats.skillStats} />
+                        <SkillsChart
+                          skills={userStats.skillStats.map((skill) => ({
+                            tagName: skill.name,
+                            problemsSolved: skill.solved,
+                          }))}
+                        />
                       </Box>
                     </CardContent>
                   </Card>
@@ -327,187 +299,11 @@ const Dashboard = () => {
                 </Card>
               </Stack>
 
-              {/* Recommendations Section */}
-              <Card>
-                <CardContent sx={{ p: 4 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mb: 3,
-                    }}
-                  >
-                    <Lightbulb
-                      style={{ height: 24, width: 24, color: "orange" }}
-                    />
-                    <Typography variant="h5" fontWeight={600}>
-                      Recommended Problems
-                    </Typography>
-                  </Box>
+              {/* Profile Analysis Section */}
+              <ProfileAnalysis userStats={userStats} />
 
-                  {/* Recommendation Filters */}
-                  <Box
-                    sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}
-                  >
-                    <FormControl size="small" sx={{ minWidth: 140 }}>
-                      <InputLabel>Topic</InputLabel>
-                      <Select
-                        value={recTopic}
-                        label="Topic"
-                        onChange={(e) => setRecTopic(e.target.value)}
-                      >
-                        <MenuItem value="">All Topics</MenuItem>
-                        <MenuItem value="array">Array</MenuItem>
-                        <MenuItem value="dynamic-programming">
-                          Dynamic Programming
-                        </MenuItem>
-                        <MenuItem value="tree">Tree</MenuItem>
-                        <MenuItem value="graph">Graph</MenuItem>
-                        <MenuItem value="string">String</MenuItem>
-                      </Select>
-                    </FormControl>
-
-                    <FormControl size="small" sx={{ minWidth: 140 }}>
-                      <InputLabel>Difficulty</InputLabel>
-                      <Select
-                        value={recDifficulty}
-                        label="Difficulty"
-                        onChange={(e) => setRecDifficulty(e.target.value)}
-                      >
-                        <MenuItem value="">All Levels</MenuItem>
-                        <MenuItem value="Easy">Easy</MenuItem>
-                        <MenuItem value="Medium">Medium</MenuItem>
-                        <MenuItem value="Hard">Hard</MenuItem>
-                      </Select>
-                    </FormControl>
-
-                    <Button
-                      variant="outlined"
-                      onClick={handleGetRecommendations}
-                      startIcon={<Zap style={{ height: 16, width: 16 }} />}
-                      sx={{ textTransform: "none" }}
-                    >
-                      Update Recommendations
-                    </Button>
-                  </Box>
-
-                  <Divider sx={{ mb: 3 }} />
-
-                  {/* Recommendations List */}
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: {
-                        xs: "1fr",
-                        md: "repeat(2, 1fr)",
-                      },
-                      gap: 2,
-                    }}
-                  >
-                    {recommendations.map((rec, index) => (
-                      <Paper
-                        key={index}
-                        sx={{
-                          p: 3,
-                          border: "1px solid",
-                          borderColor: "divider",
-                          "&:hover": {
-                            borderColor: "primary.main",
-                            boxShadow: 2,
-                          },
-                          transition: "all 0.2s ease-in-out",
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            mb: 2,
-                          }}
-                        >
-                          <Typography
-                            variant="h6"
-                            fontWeight={600}
-                            sx={{ flex: 1, mr: 2 }}
-                          >
-                            {rec.title}
-                          </Typography>
-                          <Chip
-                            label={rec.difficulty}
-                            size="small"
-                            sx={{
-                              bgcolor: getDifficultyColor(rec.difficulty),
-                              color: "white",
-                              fontWeight: 600,
-                            }}
-                          />
-                        </Box>
-
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          mb={2}
-                        >
-                          {rec.reason}
-                        </Typography>
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            gap: 1,
-                            mb: 2,
-                            flexWrap: "wrap",
-                          }}
-                        >
-                          {rec.topicTags.slice(0, 3).map((tag) => (
-                            <Chip
-                              key={tag}
-                              label={tag}
-                              size="small"
-                              variant="outlined"
-                              sx={{ fontSize: "0.75rem" }}
-                            />
-                          ))}
-                        </Box>
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Typography variant="body2" color="text.secondary">
-                            {Math.round(rec.similarity * 100)}% match
-                          </Typography>
-                          <Button
-                            href={rec.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            endIcon={
-                              <ExternalLink style={{ height: 16, width: 16 }} />
-                            }
-                            sx={{ textTransform: "none", minWidth: "auto" }}
-                          >
-                            Solve
-                          </Button>
-                        </Box>
-                      </Paper>
-                    ))}
-                  </Box>
-
-                  {recommendations.length === 0 && (
-                    <Box sx={{ textAlign: "center", py: 4 }}>
-                      <Typography color="text.secondary">
-                        Recommendations will appear here based on your solving
-                        patterns
-                      </Typography>
-                    </Box>
-                  )}
-                </CardContent>
-              </Card>
+              {/* Enhanced Recommendations Section */}
+              <SmartRecommendations userStats={userStats} />
             </>
           )}
 
