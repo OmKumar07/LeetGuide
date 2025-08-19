@@ -1,18 +1,31 @@
 import { useState } from 'react'
 import { Search, GitCompare, TrendingUp } from 'lucide-react'
+import { leetcodeService, type ComparisonData } from '../services/api'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 const Compare = () => {
   const [user1, setUser1] = useState('')
   const [user2, setUser2] = useState('')
   const [loading, setLoading] = useState(false)
+  const [comparisonData, setComparisonData] = useState<ComparisonData | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleCompare = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user1.trim() || !user2.trim()) return
     
     setLoading(true)
-    // TODO: Implement API call to compare users
-    setTimeout(() => setLoading(false), 2000) // Simulate API call
+    setError(null)
+    
+    try {
+      const comparison = await leetcodeService.compareUsers(user1.trim(), user2.trim())
+      setComparisonData(comparison)
+    } catch (err) {
+      setError('Failed to compare users. Please check usernames and try again.')
+      console.error('Error comparing users:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -64,6 +77,16 @@ const Compare = () => {
           </div>
         </form>
       </div>
+
+      {/* Loading */}
+      {loading && <LoadingSpinner />}
+
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+          {error}
+        </div>
+      )}
 
       {/* Comparison Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
