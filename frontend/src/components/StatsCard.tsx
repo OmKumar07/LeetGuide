@@ -1,4 +1,9 @@
-import { type LucideIcon } from 'lucide-react'
+
+import { type LucideIcon } from 'lucide-react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 interface StatsCardProps {
   title: string
@@ -22,60 +27,48 @@ const StatsCard = ({
   trend,
   className = '',
 }: StatsCardProps) => {
-  const colorClasses = {
-    blue: {
-      icon: 'text-blue-500',
-      bg: 'bg-blue-50',
-      trend: 'text-blue-600',
-    },
-    green: {
-      icon: 'text-green-500',
-      bg: 'bg-green-50',
-      trend: 'text-green-600',
-    },
-    purple: {
-      icon: 'text-purple-500',
-      bg: 'bg-purple-50',
-      trend: 'text-purple-600',
-    },
-    red: {
-      icon: 'text-red-500',
-      bg: 'bg-red-50',
-      trend: 'text-red-600',
-    },
-    yellow: {
-      icon: 'text-yellow-500',
-      bg: 'bg-yellow-50',
-      trend: 'text-yellow-600',
-    },
-  }
 
-  const colors = colorClasses[color]
+  const colorMap = {
+    blue: { icon: '#1976d2', bg: '#e3f2fd', trend: '#1976d2' },
+    green: { icon: '#388e3c', bg: '#e8f5e9', trend: '#388e3c' },
+    purple: { icon: '#7b1fa2', bg: '#f3e5f5', trend: '#7b1fa2' },
+    red: { icon: '#d32f2f', bg: '#ffebee', trend: '#d32f2f' },
+    yellow: { icon: '#fbc02d', bg: '#fffde7', trend: '#fbc02d' },
+  };
+  const colors = colorMap[color];
 
   return (
-    <div className={`bg-white rounded-lg shadow-lg p-6 border border-gray-200 transition-all duration-200 hover:shadow-xl ${className}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
+    <Card elevation={3} sx={{ borderRadius: 2, minWidth: 220, boxShadow: 3, m: 1 }} className={className}>
+      <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="subtitle2" color="text.secondary" mb={0.5}>
+            {title}
+          </Typography>
+          <Typography variant="h5" fontWeight={700} color="text.primary" mb={0.5}>
+            {value}
+          </Typography>
           {subtitle && (
-            <p className="text-sm text-gray-500">{subtitle}</p>
+            <Typography variant="body2" color="text.secondary">
+              {subtitle}
+            </Typography>
           )}
           {trend && (
-            <div className={`flex items-center mt-2 text-xs ${colors.trend}`}>
-              <span className="font-medium">
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, color: colors.trend, fontSize: 13 }}>
+              <Typography component="span" sx={{ fontWeight: 500 }}>
                 {trend.value > 0 ? '+' : ''}{trend.value}
-              </span>
-              <span className="ml-1 text-gray-500">{trend.label}</span>
-            </div>
+              </Typography>
+              <Typography component="span" sx={{ ml: 1, color: '#757575' }}>
+                {trend.label}
+              </Typography>
+            </Box>
           )}
-        </div>
-        <div className={`p-3 rounded-full ${colors.bg}`}>
-          <Icon className={`h-6 w-6 ${colors.icon}`} />
-        </div>
-      </div>
-    </div>
-  )
+        </Box>
+        <Box sx={{ p: 1.5, borderRadius: '50%', background: colors.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Icon style={{ height: 28, width: 28, color: colors.icon }} />
+        </Box>
+      </CardContent>
+    </Card>
+  );
 }
 
 export default StatsCard

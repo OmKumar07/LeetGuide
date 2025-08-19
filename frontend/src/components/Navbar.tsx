@@ -1,5 +1,12 @@
-import { Link, useLocation } from 'react-router-dom'
-import { BarChart3, Users, Lightbulb, Github } from 'lucide-react'
+
+import { Link, useLocation } from 'react-router-dom';
+import { BarChart3, Users, Lightbulb, Github } from 'lucide-react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 const Navbar = () => {
   const location = useLocation()
@@ -11,67 +18,45 @@ const Navbar = () => {
   ]
 
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-200">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <BarChart3 className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-900">LeetGuide</span>
-          </Link>
+    <AppBar position="static" color="inherit" elevation={1}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        {/* Logo */}
+        <Box sx={{ display: 'flex', alignItems: 'center' }} component={Link} to="/">
+          <BarChart3 style={{ height: 32, width: 32, color: '#1976d2', marginRight: 8 }} />
+          <Typography variant="h6" color="textPrimary" fontWeight={700}>
+            LeetGuide
+          </Typography>
+        </Box>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex space-x-8">
-            {navItems.map(({ path, label, icon: Icon }) => (
-              <Link
-                key={path}
-                to={path}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  location.pathname === path
-                    ? 'text-primary-600 bg-primary-50'
-                    : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{label}</span>
-              </Link>
-            ))}
-          </div>
+        {/* Navigation Links */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
+          {navItems.map(({ path, label, icon: Icon }) => (
+            <Button
+              key={path}
+              component={Link}
+              to={path}
+              startIcon={<Icon style={{ height: 20, width: 20 }} />}
+              color={location.pathname === path ? 'primary' : 'inherit'}
+              variant={location.pathname === path ? 'contained' : 'text'}
+              sx={{ fontWeight: 500, textTransform: 'none' }}
+            >
+              {label}
+            </Button>
+          ))}
+        </Box>
 
-          {/* GitHub Link */}
-          <a
-            href="https://github.com/OmKumar07/LeetGuide"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <Github className="h-5 w-5" />
-            <span className="hidden sm:inline">GitHub</span>
-          </a>
-        </div>
-
-        {/* Mobile Navigation */}
-        <div className="md:hidden pb-4">
-          <div className="flex space-x-4">
-            {navItems.map(({ path, label, icon: Icon }) => (
-              <Link
-                key={path}
-                to={path}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  location.pathname === path
-                    ? 'text-primary-600 bg-primary-50'
-                    : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{label}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-    </nav>
-  )
+        {/* GitHub Link */}
+        <IconButton
+          href="https://github.com/OmKumar07/LeetGuide"
+          target="_blank"
+          rel="noopener noreferrer"
+          color="inherit"
+        >
+          <Github style={{ height: 24, width: 24 }} />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
+  );
 }
 
 export default Navbar
