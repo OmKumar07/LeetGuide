@@ -3,12 +3,13 @@ import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Compare from './pages/Compare'
 import Recommendations from './pages/Recommendations'
-import './App.css'
+import TailwindTest from './components/TailwindTest'
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <TailwindTest />
         <Navbar />
         <main className="container mx-auto px-4 py-8">
           <Routes>
