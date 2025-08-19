@@ -36,9 +36,9 @@ LeetGuide/
 
 ### NLP Service
 - **Framework**: Python FastAPI
-- **AI**: Gemini API
-- **ML**: Hugging Face Transformers
-- **Embeddings**: Sentence Transformers
+- **AI**: Gemini API for intelligent recommendations
+- **ML**: Problem similarity analysis
+- **Embeddings**: Smart content matching
 
 ## 🚀 Features
 
@@ -68,6 +68,13 @@ LeetGuide/
 
 ## 🏃‍♂️ Quick Start
 
+### Prerequisites
+- Node.js 18+ 
+- Python 3.8+
+- Gemini API Key ([Get one here](https://makersuite.google.com/app/apikey))
+
+### Setup
+
 ```bash
 # Clone and setup
 git clone https://github.com/OmKumar07/LeetGuide.git
@@ -78,7 +85,7 @@ cd frontend
 npm install
 npm run dev
 
-# Backend
+# Backend  
 cd ../backend
 npm install
 npm run dev
@@ -86,8 +93,24 @@ npm run dev
 # NLP Service
 cd ../nlp-service
 pip install -r requirements.txt
+cp .env.example .env
+# Add your GEMINI_API_KEY to .env file
 uvicorn main:app --reload
 ```
+
+### Environment Setup
+
+1. **Get Gemini API Key**: Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. **Configure NLP Service**: 
+   ```bash
+   cd nlp-service
+   cp .env.example .env
+   # Edit .env and add: GEMINI_API_KEY=your_actual_key_here
+   ```
+3. **Start Services**:
+   - Frontend: http://localhost:5173
+   - Backend: http://localhost:3001  
+   - NLP Service: http://localhost:8000
 
 ## 📈 Development Progress
 
