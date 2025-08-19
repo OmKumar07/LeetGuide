@@ -208,7 +208,7 @@ export const leetcodeService = {
       return response.data;
     } catch {
       console.warn("Using mock learning path data");
-      return getMockLearningPath(username);
+      return getMockLearningPath();
     }
   },
   async getRecommendations(
@@ -341,7 +341,7 @@ function getMockUserStats(username: string): UserStats {
   };
 }
 
-function getMockLearningPath(_username: string): LearningPath {
+function getMockLearningPath(): LearningPath {
   return {
     currentPath: {
       phase: "Skill Expansion",
