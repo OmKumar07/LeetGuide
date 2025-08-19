@@ -1,16 +1,7 @@
-import { useState } from 'react';
-import { Search, GitCompare, TrendingUp } from 'lucide-react';
-import { leetcodeService, type ComparisonData } from '../services/api';
-import LoadingSpinner from '../components/LoadingSpinner';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Alert from '@mui/material/Alert';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import InputAdornment from '@mui/material/InputAdornment';
+import { useState } from 'react'
+import { Search, GitCompare, TrendingUp } from 'lucide-react'
+import { leetcodeService, type ComparisonData } from '../services/api'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 const Compare = () => {
   const [user1, setUser1] = useState('')
@@ -38,17 +29,16 @@ const Compare = () => {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {/* Header */}
-        <Box sx={{ textAlign: 'center', mb: 2 }}>
-          <Typography variant="h3" component="h1" fontWeight={700} color="text.primary" mb={2}>
-            User Comparison
-          </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-            Compare two LeetCode users side-by-side to analyze strengths, weaknesses, and progress trends
-          </Typography>
-        </Box>
+    <div className="space-y-8 animate-fade-in">
+      {/* Header */}
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          User Comparison
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Compare two LeetCode users side-by-side to analyze strengths, weaknesses, and progress trends
+        </p>
+      </div>
 
       {/* Search Section */}
       <div className="max-w-2xl mx-auto">
