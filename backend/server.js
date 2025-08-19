@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3001;
 
 // Import routes
 const leetcodeRoutes = require('./routes/leetcode');
+const recommendationsRoutes = require('./routes/recommendations');
 
 // Middleware
 app.use(cors());
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/leetcode', leetcodeRoutes);
+app.use('/api', recommendationsRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
