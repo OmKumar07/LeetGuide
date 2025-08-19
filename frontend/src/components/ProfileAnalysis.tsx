@@ -85,7 +85,9 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {phaseInfo.next
-                  ? `${phaseInfo.next - (userStats.totalSolved || 0)} to next level`
+                  ? `${
+                      phaseInfo.next - (userStats.totalSolved || 0)
+                    } to next level`
                   : "Max level reached!"}
               </Typography>
             </Box>
@@ -251,7 +253,9 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                       fontWeight={700}
                       color="success.main"
                     >
-                      {userStats.contestRanking?.topPercentage?.toFixed(1) || "0"}%
+                      {userStats.contestRanking?.topPercentage?.toFixed(1) ||
+                        "0"}
+                      %
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       Top Percentage
