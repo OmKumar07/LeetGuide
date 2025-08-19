@@ -1,17 +1,33 @@
 import { useState } from 'react'
-import { Search, TrendingUp, Award, Clock, BarChart3, Users, Lightbulb } from 'lucide-react'
+import { Search, TrendingUp, Award, Clock, BarChart3, Users, Lightbulb, Target } from 'lucide-react'
+import { leetcodeService, type UserStats } from '../services/api'
+import StatsCard from '../components/StatsCard'
+import DifficultyChart from '../components/charts/DifficultyChart'
+import SkillsChart from '../components/charts/SkillsChart'
+import ProgressChart from '../components/charts/ProgressChart'
 
 const Dashboard = () => {
   const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
+  const [userStats, setUserStats] = useState<UserStats | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!username.trim()) return
     
     setLoading(true)
-    // TODO: Implement API call to fetch user data
-    setTimeout(() => setLoading(false), 2000) // Simulate API call
+    setError(null)
+    
+    try {
+      const stats = await leetcodeService.getUserStats(username.trim())
+      setUserStats(stats)
+    } catch (err) {
+      setError('Failed to fetch user data. Please check the username and try again.')
+      console.error('Error fetching user stats:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -49,38 +65,120 @@ const Dashboard = () => {
         </form>
       </div>
 
-      {/* Stats Preview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Solved</p>
-              <p className="text-2xl font-bold text-gray-900">--</p>
-            </div>
-            <TrendingUp className="h-8 w-8 text-green-500" />
-          </div>
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+          {error}
         </div>
+      )}
 
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Success Rate</p>
-              <p className="text-2xl font-bold text-gray-900">--%</p>
-            </div>
-            <Award className="h-8 w-8 text-blue-500" />
-          </div>
+      {/* Stats Cards */}
+      {userStats ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatsCard
+            title="Total Solved"
+            value={userStats.totalSolved}
+            subtitle={`Rank: ${userStats.ranking.toLocaleString()}`}
+            icon={TrendingUp}
+            color="green"
+          />
+          <StatsCard
+            title="Acceptance Rate"
+            value={`${userStats.acceptanceRate}%`}
+            subtitle="Success ratio"
+            icon={Target}
+            color="blue"
+          />
+          <StatsCard
+            title="Contribution"
+            value={userStats.contributionPoints}
+            subtitle="Community points"
+            icon={Award}
+            color="purple"
+          />
+          <StatsCard
+            title="Recent Activity"
+            value={userStats.recentSubmissions.length}
+            subtitle="Recent submissions"
+            icon={Clock}
+            color="yellow"
+          />
         </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Solved</p>
+                <p className="text-2xl font-bold text-gray-900">--</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-green-500" />
+            </div>
+          </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Recent Activity</p>
-              <p className="text-2xl font-bold text-gray-900">--</p>
+          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Success Rate</p>
+                <p className="text-2xl font-bold text-gray-900">--%</p>
+              </div>
+              <Award className="h-8 w-8 text-blue-500" />
             </div>
-            <Clock className="h-8 w-8 text-purple-500" />
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Recent Activity</p>
+                <p className="text-2xl font-bold text-gray-900">--</p>
+              </div>
+              <Clock className="h-8 w-8 text-purple-500" />
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Charts Section */}
+      {userStats && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Difficulty Distribution */}
+          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Problems by Difficulty
+            </h3>
+            <div className="h-64">
+              <DifficultyChart
+                easy={userStats.easySolved}
+                medium={userStats.mediumSolved}
+                hard={userStats.hardSolved}
+                className="h-full"
+              />
+            </div>
+          </div>
+
+          {/* Skills Chart */}
+          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+            <div className="h-64">
+              <SkillsChart
+                skills={userStats.skillStats}
+                className="h-full"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Progress Chart */}
+      {userStats && (
+        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+          <div className="h-64">
+            <ProgressChart
+              submissionCalendar={userStats.submissionCalendar}
+              className="h-full"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Getting Started */}
       <div className="bg-gradient-to-r from-primary-50 to-indigo-50 rounded-lg p-8 text-center">
