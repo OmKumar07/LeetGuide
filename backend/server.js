@@ -7,9 +7,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Import routes
+const leetcodeRoutes = require('./routes/leetcode');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Routes
+app.use('/api/leetcode', leetcodeRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
