@@ -37,14 +37,46 @@ const ActivityChart = ({
   averagePerDay,
 }: ActivityChartProps) => {
   console.log("ActivityChart - averagePerDay:", averagePerDay);
-  // Get last 30 days of data for trending
-  const last30Days = submissionCalendar.slice(-30).map((entry) => ({
+  console.log("ActivityChart - submissionCalendar:", submissionCalendar);
+
+  // Always use the last 7 days of data (backend now guarantees 7 days)
+  // If backend provides less than 7 days, fill with zeros
+  let last7Days = [];
+
+  if (submissionCalendar.length >= 7) {
+    last7Days = submissionCalendar.slice(-7);
+  } else {
+    // Fill missing days with zeros if less than 7 days provided
+    const today = new Date();
+    last7Days = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(today.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+
+      // Find if this date exists in the provided data
+      const existingData = submissionCalendar.find(
+        (entry) => entry.date === dateStr
+      );
+
+      last7Days.push({
+        date: dateStr,
+        count: existingData ? existingData.count : 0,
+      });
+    }
+  }
+
+  // Format dates for display
+  const formattedLast7Days = last7Days.map((entry) => ({
     ...entry,
     date: new Date(entry.date).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
     }),
   }));
+
+  console.log("ActivityChart - formattedLast7Days:", formattedLast7Days);
 
   // Calculate moving averages for trend line
   const calculateMovingAverage = (data: number[], windowSize: number = 7) => {
@@ -58,11 +90,11 @@ const ActivityChart = ({
     return result;
   };
 
-  const dailyCounts = last30Days.map((entry) => entry.count);
+  const dailyCounts = formattedLast7Days.map((entry) => entry.count);
   const movingAverages = calculateMovingAverage(dailyCounts);
 
   const data = {
-    labels: last30Days.map((entry) => entry.date),
+    labels: formattedLast7Days.map((entry) => entry.date),
     datasets: [
       {
         label: "Daily Submissions",
@@ -111,7 +143,7 @@ const ActivityChart = ({
       },
       title: {
         display: true,
-        text: `Daily Activity Trend (Avg: ${averagePerDay}/day)`,
+        text: `Past 7 Days Activity (Avg: ${averagePerDay}/day)`,
         font: {
           size: 16,
           weight: 600,
@@ -141,6 +173,7 @@ const ActivityChart = ({
     scales: {
       y: {
         beginAtZero: true,
+        min: 0,
         ticks: {
           stepSize: 1,
           callback: (value) => `${value}`,

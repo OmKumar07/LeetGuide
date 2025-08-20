@@ -9,7 +9,7 @@ import {
   Paper,
   Avatar,
 } from "@mui/material";
-import { TrendingUp, Target, Star, Award, Calendar, Zap } from "lucide-react";
+import { TrendingUp, Target, Star, Award, Calendar } from "lucide-react";
 import type { UserStats } from "../services/api";
 import { leetcodeColors } from "../theme/theme";
 
@@ -26,6 +26,8 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
     longestStreak: 0,
     totalActiveDays: 0,
     averageSubmissionsPerDay: "0",
+    past7DaysSubmissions: 0,
+    past7DaysActiveDays: 0,
   };
 
   const badges = userStats.badges || [];
@@ -76,64 +78,84 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
   return (
     <Card
       sx={{
-        background:
-          "linear-gradient(135deg, rgba(255, 161, 22, 0.03) 0%, rgba(0, 175, 155, 0.03) 50%, rgba(14, 165, 233, 0.03) 100%)",
-        border: `1px solid rgba(255, 161, 22, 0.1)`,
+        background: (theme) =>
+          theme.palette.mode === "dark"
+            ? "linear-gradient(135deg, rgba(255, 161, 22, 0.08) 0%, rgba(0, 175, 155, 0.08) 50%, rgba(14, 165, 233, 0.08) 100%)"
+            : "linear-gradient(135deg, rgba(255, 161, 22, 0.03) 0%, rgba(0, 175, 155, 0.03) 50%, rgba(14, 165, 233, 0.03) 100%)",
+        border: (theme) =>
+          theme.palette.mode === "dark"
+            ? `1px solid rgba(255, 161, 22, 0.2)`
+            : `1px solid rgba(255, 161, 22, 0.1)`,
         borderRadius: 4,
         overflow: "hidden",
-        position: 'relative',
-        '&::before': {
+        position: "relative",
+        "&::before": {
           content: '""',
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
-          height: '4px',
+          height: "4px",
           background: `linear-gradient(90deg, ${leetcodeColors.leetcodeOrange} 0%, ${leetcodeColors.leetcodeGreen} 50%, ${leetcodeColors.leetcodeBlue} 100%)`,
         },
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.04)',
-        transition: 'all 0.3s ease',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: '0 12px 48px rgba(0, 0, 0, 0.08)',
-        }
+        boxShadow: (theme) =>
+          theme.palette.mode === "dark"
+            ? "0 8px 32px rgba(0, 0, 0, 0.3)"
+            : "0 8px 32px rgba(0, 0, 0, 0.04)",
+        transition: "all 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-2px)",
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? "0 12px 48px rgba(0, 0, 0, 0.4)"
+              : "0 12px 48px rgba(0, 0, 0, 0.08)",
+        },
       }}
     >
       <CardContent sx={{ p: 0 }}>
         {/* Header Section */}
         <Box
           sx={{
-            background: `linear-gradient(135deg, ${leetcodeColors.leetcodeOrange}08 0%, ${leetcodeColors.leetcodeGreen}08 50%, ${leetcodeColors.leetcodeBlue}08 100%)`,
+            background: (theme) =>
+              theme.palette.mode === "dark"
+                ? `linear-gradient(135deg, ${leetcodeColors.leetcodeOrange}12 0%, ${leetcodeColors.leetcodeGreen}12 50%, ${leetcodeColors.leetcodeBlue}12 100%)`
+                : `linear-gradient(135deg, ${leetcodeColors.leetcodeOrange}08 0%, ${leetcodeColors.leetcodeGreen}08 50%, ${leetcodeColors.leetcodeBlue}08 100%)`,
             p: 4,
-            borderBottom: "1px solid rgba(255, 161, 22, 0.08)",
-            position: 'relative',
-            '&::after': {
+            borderBottom: (theme) =>
+              theme.palette.mode === "dark"
+                ? "1px solid rgba(255, 161, 22, 0.15)"
+                : "1px solid rgba(255, 161, 22, 0.08)",
+            position: "relative",
+            "&::after": {
               content: '""',
-              position: 'absolute',
+              position: "absolute",
               bottom: 0,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '60px',
-              height: '2px',
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "60px",
+              height: "2px",
               background: `linear-gradient(90deg, ${leetcodeColors.leetcodeOrange} 0%, ${leetcodeColors.leetcodeGreen} 100%)`,
-              borderRadius: '1px',
-            }
+              borderRadius: "1px",
+            },
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 3, mb: 4 }}>
             <Avatar
               sx={{
-                bgcolor: `linear-gradient(135deg, ${leetcodeColors.leetcodeOrange} 0%, ${leetcodeColors.leetcodeGreen} 100%)`,
+                background: `linear-gradient(135deg, ${leetcodeColors.leetcodeOrange} 0%, ${leetcodeColors.leetcodeGreen} 100%)`,
                 width: 52,
                 height: 52,
                 fontSize: "1.4rem",
                 boxShadow: `0 8px 24px ${leetcodeColors.leetcodeOrange}25`,
-                border: '3px solid rgba(255, 255, 255, 0.8)',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'scale(1.05)',
+                border: (theme) =>
+                  theme.palette.mode === "dark"
+                    ? "3px solid rgba(255, 255, 255, 0.1)"
+                    : "3px solid rgba(255, 255, 255, 0.8)",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  transform: "scale(1.05)",
                   boxShadow: `0 12px 32px ${leetcodeColors.leetcodeOrange}35`,
-                }
+                },
               }}
             >
               <TrendingUp size={24} color="white" />
@@ -143,24 +165,21 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                 variant="h4"
                 fontWeight={800}
                 sx={{
-                  background: `linear-gradient(135deg, ${leetcodeColors.leetcodeOrange} 0%, ${leetcodeColors.leetcodeGreen} 50%, ${leetcodeColors.leetcodeBlue} 100%)`,
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
+                  color: "#FFA116",
                   fontSize: "1.75rem",
                   mb: 1,
-                  letterSpacing: '-0.02em'
+                  letterSpacing: "-0.02em",
                 }}
               >
                 Profile Analysis
               </Typography>
-              <Typography 
-                variant="body1" 
+              <Typography
+                variant="body1"
                 color="text.secondary"
-                sx={{ 
+                sx={{
                   fontWeight: 500,
-                  fontSize: '0.95rem',
-                  opacity: 0.8
+                  fontSize: "0.95rem",
+                  opacity: 0.8,
                 }}
               >
                 Deep insights into your coding journey and performance metrics
@@ -174,24 +193,39 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
             sx={{
               p: 4,
               borderRadius: 3,
-              background: 'rgba(255, 255, 255, 0.95)',
+              background: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "rgba(30, 41, 59, 0.8)"
+                  : "rgba(255, 255, 255, 0.95)",
               backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              position: 'relative',
-              overflow: 'hidden',
-              '&::before': {
+              border: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "1px solid rgba(255, 255, 255, 0.1)"
+                  : "1px solid rgba(255, 255, 255, 0.3)",
+              position: "relative",
+              overflow: "hidden",
+              "&::before": {
                 content: '""',
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
                 background: `linear-gradient(135deg, ${phaseInfo.color}05 0%, transparent 50%)`,
-                pointerEvents: 'none',
-              }
+                pointerEvents: "none",
+              },
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 3, mb: 3, position: 'relative', zIndex: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 3,
+                mb: 3,
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
               <Box
                 sx={{
                   width: 64,
@@ -199,16 +233,16 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                   borderRadius: 3,
                   background: `linear-gradient(135deg, ${phaseInfo.color}15 0%, ${phaseInfo.color}25 100%)`,
                   border: `2px solid ${phaseInfo.color}30`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '2rem',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "2rem",
                   boxShadow: `0 8px 24px ${phaseInfo.color}20`,
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.05) rotate(5deg)',
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.05) rotate(5deg)",
                     boxShadow: `0 12px 32px ${phaseInfo.color}30`,
-                  }
+                  },
                 }}
               >
                 {phaseInfo.icon}
@@ -217,39 +251,60 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                 <Typography
                   variant="h5"
                   fontWeight={800}
-                  sx={{ 
+                  sx={{
                     color: phaseInfo.color,
                     mb: 0.5,
-                    fontSize: '1.4rem',
-                    letterSpacing: '-0.01em'
+                    fontSize: "1.4rem",
+                    letterSpacing: "-0.01em",
                   }}
                 >
                   {phaseInfo.phase} Level
                 </Typography>
-                <Typography 
-                  variant="body1" 
+                <Typography
+                  variant="body1"
                   color="text.secondary"
-                  sx={{ 
+                  sx={{
                     fontWeight: 500,
-                    fontSize: '0.9rem'
+                    fontSize: "0.9rem",
                   }}
                 >
                   {phaseInfo.next
-                    ? `${phaseInfo.next - (userStats.totalSolved || 0)} problems to reach ${
-                        phaseInfo.next === 50 ? 'Intermediate' :
-                        phaseInfo.next === 150 ? 'Advanced' :
-                        phaseInfo.next === 300 ? 'Expert' : 'Next'
+                    ? `${
+                        phaseInfo.next - (userStats.totalSolved || 0)
+                      } problems to reach ${
+                        phaseInfo.next === 50
+                          ? "Intermediate"
+                          : phaseInfo.next === 150
+                          ? "Advanced"
+                          : phaseInfo.next === 300
+                          ? "Expert"
+                          : "Next"
                       } level`
                     : "You've mastered all levels! Keep challenging yourself! 🎉"}
                 </Typography>
               </Box>
             </Box>
-            <Box sx={{ position: 'relative', zIndex: 1 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="body2" fontWeight={600} color="text.secondary">
+            <Box sx={{ position: "relative", zIndex: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight={600}
+                  color="text.secondary"
+                >
                   Progress to Next Level
                 </Typography>
-                <Typography variant="body2" fontWeight={700} sx={{ color: phaseInfo.color }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  sx={{ color: phaseInfo.color }}
+                >
                   {Math.round(phaseInfo.progress)}%
                 </Typography>
               </Box>
@@ -259,28 +314,32 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                 sx={{
                   height: 16,
                   borderRadius: 8,
-                  bgcolor: "rgba(0, 0, 0, 0.06)",
-                  position: 'relative',
-                  overflow: 'hidden',
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.1)"
+                      : "rgba(0, 0, 0, 0.06)",
+                  position: "relative",
+                  overflow: "hidden",
                   "& .MuiLinearProgress-bar": {
                     borderRadius: 8,
                     background: `linear-gradient(90deg, ${phaseInfo.color}60 0%, ${phaseInfo.color} 100%)`,
-                    position: 'relative',
-                    '&::after': {
+                    position: "relative",
+                    "&::after": {
                       content: '""',
-                      position: 'absolute',
+                      position: "absolute",
                       top: 0,
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)',
-                      animation: 'shimmer 2s infinite',
-                    }
+                      background:
+                        "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)",
+                      animation: "shimmer 2s infinite",
+                    },
                   },
-                  '@keyframes shimmer': {
-                    '0%': { transform: 'translateX(-100%)' },
-                    '100%': { transform: 'translateX(100%)' }
-                  }
+                  "@keyframes shimmer": {
+                    "0%": { transform: "translateX(-100%)" },
+                    "100%": { transform: "translateX(100%)" },
+                  },
                 }}
               />
             </Box>
@@ -446,7 +505,10 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                     sx={{
                       p: 2.5,
                       borderRadius: 2,
-                      background: `linear-gradient(135deg, ${leetcodeColors.easy}10 0%, ${leetcodeColors.easy}20 100%)`,
+                      background: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? `linear-gradient(135deg, ${leetcodeColors.easy}20 0%, ${leetcodeColors.easy}30 100%)`
+                          : `linear-gradient(135deg, ${leetcodeColors.easy}10 0%, ${leetcodeColors.easy}20 100%)`,
                       border: `1px solid ${leetcodeColors.easy}30`,
                     }}
                   >
@@ -473,7 +535,10 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                     sx={{
                       p: 2.5,
                       borderRadius: 2,
-                      background: `linear-gradient(135deg, ${leetcodeColors.leetcodeBlue}10 0%, ${leetcodeColors.leetcodeBlue}20 100%)`,
+                      background: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? `linear-gradient(135deg, ${leetcodeColors.leetcodeBlue}20 0%, ${leetcodeColors.leetcodeBlue}30 100%)`
+                          : `linear-gradient(135deg, ${leetcodeColors.leetcodeBlue}10 0%, ${leetcodeColors.leetcodeBlue}20 100%)`,
                       border: `1px solid ${leetcodeColors.leetcodeBlue}30`,
                     }}
                   >
@@ -500,9 +565,14 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                     sx={{
                       p: 2.5,
                       borderRadius: 2,
-                      background:
-                        "linear-gradient(135deg, rgba(156, 163, 175, 0.1) 0%, rgba(156, 163, 175, 0.2) 100%)",
-                      border: "1px solid rgba(156, 163, 175, 0.3)",
+                      background: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "linear-gradient(135deg, rgba(156, 163, 175, 0.2) 0%, rgba(156, 163, 175, 0.3) 100%)"
+                          : "linear-gradient(135deg, rgba(156, 163, 175, 0.1) 0%, rgba(156, 163, 175, 0.2) 100%)",
+                      border: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "1px solid rgba(156, 163, 175, 0.4)"
+                          : "1px solid rgba(156, 163, 175, 0.3)",
                     }}
                   >
                     <Typography
@@ -522,61 +592,68 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
             </Box>
 
             {/* Top Skills */}
-            <Box>
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}
-              >
-                <Avatar
-                  sx={{ bgcolor: leetcodeColors.hard, width: 32, height: 32 }}
+            {userStats.skillStats && userStats.skillStats.length > 0 && (
+              <Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    mb: 3,
+                  }}
                 >
-                  <Zap size={16} />
-                </Avatar>
-                <Typography variant="h6" fontWeight={700}>
-                  Top Problem Topics
-                </Typography>
-              </Box>
+                  <Avatar
+                    sx={{ bgcolor: leetcodeColors.hard, width: 32, height: 32 }}
+                  >
+                    <Target size={16} />
+                  </Avatar>
+                  <Typography variant="h6" fontWeight={700}>
+                    Top Problem Topics
+                  </Typography>
+                </Box>
 
-              <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
-                {userStats.skillStats?.slice(0, 6).map((skill, index) => (
-                  <Chip
-                    key={skill.name}
-                    label={`${skill.name}: ${skill.solved}`}
-                    size="medium"
-                    sx={{
-                      fontWeight: 600,
-                      fontSize: "0.8rem",
-                      background:
-                        index % 3 === 0
-                          ? `linear-gradient(135deg, ${leetcodeColors.easy}20 0%, ${leetcodeColors.easy}30 100%)`
-                          : index % 3 === 1
-                          ? `linear-gradient(135deg, ${leetcodeColors.medium}20 0%, ${leetcodeColors.medium}30 100%)`
-                          : `linear-gradient(135deg, ${leetcodeColors.hard}20 0%, ${leetcodeColors.hard}30 100%)`,
-                      border:
-                        index % 3 === 0
-                          ? `1px solid ${leetcodeColors.easy}40`
-                          : index % 3 === 1
-                          ? `1px solid ${leetcodeColors.medium}40`
-                          : `1px solid ${leetcodeColors.hard}40`,
-                      color:
-                        index % 3 === 0
-                          ? leetcodeColors.easy
-                          : index % 3 === 1
-                          ? leetcodeColors.medium
-                          : leetcodeColors.hard,
-                      "&:hover": {
-                        transform: "translateY(-1px)",
-                        boxShadow:
+                <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
+                  {userStats.skillStats.slice(0, 6).map((skill, index) => (
+                    <Chip
+                      key={skill.name}
+                      label={`${skill.name}: ${skill.solved || 0}`}
+                      size="medium"
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: "0.8rem",
+                        background:
                           index % 3 === 0
-                            ? `0 4px 12px ${leetcodeColors.easy}20`
+                            ? `linear-gradient(135deg, ${leetcodeColors.easy}20 0%, ${leetcodeColors.easy}30 100%)`
                             : index % 3 === 1
-                            ? `0 4px 12px ${leetcodeColors.medium}20`
-                            : `0 4px 12px ${leetcodeColors.hard}20`,
-                      },
-                    }}
-                  />
-                ))}
-              </Stack>
-            </Box>
+                            ? `linear-gradient(135deg, ${leetcodeColors.medium}20 0%, ${leetcodeColors.medium}30 100%)`
+                            : `linear-gradient(135deg, ${leetcodeColors.hard}20 0%, ${leetcodeColors.hard}30 100%)`,
+                        border:
+                          index % 3 === 0
+                            ? `1px solid ${leetcodeColors.easy}40`
+                            : index % 3 === 1
+                            ? `1px solid ${leetcodeColors.medium}40`
+                            : `1px solid ${leetcodeColors.hard}40`,
+                        color:
+                          index % 3 === 0
+                            ? leetcodeColors.easy
+                            : index % 3 === 1
+                            ? leetcodeColors.medium
+                            : leetcodeColors.hard,
+                        "&:hover": {
+                          transform: "translateY(-1px)",
+                          boxShadow:
+                            index % 3 === 0
+                              ? `0 4px 12px ${leetcodeColors.easy}20`
+                              : index % 3 === 1
+                              ? `0 4px 12px ${leetcodeColors.medium}20`
+                              : `0 4px 12px ${leetcodeColors.hard}20`,
+                        },
+                      }}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            )}
 
             {/* Contest Performance */}
             {userStats.contestRanking && (

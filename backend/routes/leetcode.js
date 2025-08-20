@@ -235,52 +235,135 @@ const fetchLeetCodeUserData = async (username) => {
     const { currentStreak, longestStreak, totalActiveDays } =
       calculateStreaks(submissionCalendar);
 
-    // Generate submission calendar data with error handling
+    // Generate submission calendar data with error handling and ensure past 7 days are always included
     let submissionCalendarData = [];
     try {
-      submissionCalendarData = Object.entries(submissionCalendar)
-        .map(([timestamp, count]) => {
-          try {
-            return {
-              date: new Date(parseInt(timestamp) * 1000)
-                .toISOString()
-                .split("T")[0],
-              count: parseInt(count) || 0,
-            };
-          } catch (dateError) {
-            console.warn("Failed to parse date:", timestamp, dateError.message);
-            return null;
-          }
-        })
-        .filter((item) => item !== null)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
+      // Get current date for filtering recent data
+      const currentDate = new Date();
+      const sevenDaysAgoForCalendar = new Date();
+      sevenDaysAgoForCalendar.setDate(currentDate.getDate() - 6); // Include today, so 7 days total
+
+      // Create a map from existing submission data
+      const submissionMap = new Map();
+      Object.entries(submissionCalendar).forEach(([timestamp, count]) => {
+        try {
+          const submissionDate = new Date(parseInt(timestamp) * 1000);
+          const dateStr = submissionDate.toISOString().split("T")[0];
+          submissionMap.set(dateStr, parseInt(count) || 0);
+        } catch (dateError) {
+          console.warn("Failed to parse date:", timestamp, dateError.message);
+        }
+      });
+
+      // Generate past 7 days data, filling missing days with 0
+      submissionCalendarData = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(currentDate.getDate() - i);
+        const dateStr = date.toISOString().split("T")[0];
+        const count = submissionMap.get(dateStr) || 0;
+
+        submissionCalendarData.push({
+          date: dateStr,
+          count: count,
+        });
+      }
+
+      console.log(
+        `Debug - Calendar data entries: ${submissionCalendarData.length}`
+      );
+      console.log(`Debug - Past 7 days data:`, submissionCalendarData);
     } catch (calendarError) {
       console.warn(
         "Failed to process submission calendar:",
         calendarError.message
       );
+      // Fallback: create 7 days of zero data
       submissionCalendarData = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        submissionCalendarData.push({
+          date: date.toISOString().split("T")[0],
+          count: 0,
+        });
+      }
     }
 
-    // Calculate average problems per day with debug info
+    // Calculate average problems per day for past 7 days with debug info
     let averagePerDay = "0";
     console.log(
       `Debug - totalSolved: ${totalSolved}, totalActiveDays: ${totalActiveDays}, submissionCalendarData.length: ${submissionCalendarData.length}`
     );
 
-    if (totalSolved > 0) {
-      if (totalActiveDays > 0) {
-        // Primary method: Use active days for meaningful average
-        averagePerDay = (totalSolved / totalActiveDays).toFixed(1);
+    // Calculate past 7 days average (from today back to 7 days)
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 6); // Include today, so 7 days total
+
+    // Set time boundaries for precise comparison
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+    const todayEnd = new Date(today);
+    todayEnd.setHours(23, 59, 59, 999);
+
+    let past7DaysSubmissions = 0;
+    let past7DaysActiveDays = 0;
+
+    console.log(
+      `Debug - Date range: ${sevenDaysAgo.toISOString()} to ${todayEnd.toISOString()}`
+    );
+    console.log(`Debug - Today is: ${today.toLocaleDateString()}`);
+
+    if (submissionCalendar && Object.keys(submissionCalendar).length > 0) {
+      Object.entries(submissionCalendar).forEach(([timestamp, count]) => {
+        try {
+          const submissionDate = new Date(parseInt(timestamp) * 1000);
+
+          // Debug logging for date comparison
+          if (count > 0) {
+            console.log(
+              `Debug - Submission date: ${submissionDate.toLocaleDateString()}, count: ${count}`
+            );
+          }
+
+          if (
+            submissionDate >= sevenDaysAgo &&
+            submissionDate <= todayEnd &&
+            count > 0
+          ) {
+            past7DaysSubmissions += parseInt(count) || 0;
+            past7DaysActiveDays++;
+            console.log(
+              `Debug - INCLUDED: ${submissionDate.toLocaleDateString()}, count: ${count}`
+            );
+          }
+        } catch (dateError) {
+          console.warn(
+            "Failed to parse submission date:",
+            timestamp,
+            dateError.message
+          );
+        }
+      });
+
+      if (past7DaysActiveDays >= 0) {
+        // Always calculate based on 7 days, regardless of active days
+        averagePerDay = (past7DaysSubmissions / 7).toFixed(1);
         console.log(
-          `Debug - Using active days: ${totalActiveDays}, average: ${averagePerDay}`
+          `Debug - Past 7 days: ${past7DaysSubmissions} submissions over 7 days, average: ${averagePerDay}/day`
         );
       } else {
-        // Fallback: assume user has been active for at least 10 days minimum
-        averagePerDay = (totalSolved / Math.max(10, totalSolved)).toFixed(1);
+        averagePerDay = "0.0";
+      }
+    } else {
+      // Fallback: Use total data if no submission calendar
+      if (totalSolved > 0 && totalActiveDays > 0) {
+        averagePerDay = (totalSolved / totalActiveDays).toFixed(1);
         console.log(
-          `Debug - Using minimum active days fallback, average: ${averagePerDay}`
+          `Debug - Using total active days fallback: ${totalActiveDays}, average: ${averagePerDay}`
         );
+      } else {
+        averagePerDay = "0";
       }
     }
     console.log(`Debug - Final average: ${averagePerDay}`);
@@ -341,6 +424,8 @@ const fetchLeetCodeUserData = async (username) => {
         longestStreak,
         totalActiveDays,
         averageSubmissionsPerDay: averagePerDay,
+        past7DaysSubmissions,
+        past7DaysActiveDays,
       },
 
       // Language proficiency with safety check

@@ -50,6 +50,8 @@ export interface UserStats {
     longestStreak: number;
     totalActiveDays: number;
     averageSubmissionsPerDay: string;
+    past7DaysSubmissions?: number;
+    past7DaysActiveDays?: number;
   };
 
   // Language proficiency
