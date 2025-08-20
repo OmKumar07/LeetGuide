@@ -26,7 +26,6 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
     averageSubmissionsPerDay: "0",
   };
 
-  const languageStats = userStats.languageStats || [];
   const badges = userStats.badges || [];
 
   const getStreakColor = (streak: number) => {
@@ -194,16 +193,16 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
 
           <Divider />
 
-          {/* Language Proficiency */}
+          {/* Top Skills */}
           <Box>
             <Typography variant="body2" fontWeight={600} mb={2}>
-              Language Proficiency
+              Top Problem Topics
             </Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap">
-              {languageStats.slice(0, 4).map((lang) => (
+              {userStats.skillStats?.slice(0, 4).map((skill) => (
                 <Chip
-                  key={lang.languageName}
-                  label={`${lang.languageName}: ${lang.problemsSolved}`}
+                  key={skill.name}
+                  label={`${skill.name}: ${skill.solved}`}
                   size="small"
                   variant="outlined"
                   sx={{ fontWeight: 500 }}

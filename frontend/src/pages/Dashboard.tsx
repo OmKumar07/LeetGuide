@@ -35,7 +35,10 @@ const Dashboard = () => {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username.trim()) return;
+    if (!username.trim()) {
+      setError("Please enter a username");
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -51,11 +54,54 @@ const Dashboard = () => {
         ...stats,
         totalSolved: totalSolved,
       });
-    } catch (err) {
-      setError(
-        "Failed to fetch user data. Please check the username and try again."
-      );
+    } catch (err: unknown) {
       console.error("Error fetching user stats:", err);
+
+      // More specific error handling
+      if (err && typeof err === "object" && "response" in err) {
+        const error = err as {
+          response?: { status?: number; data?: { error?: string } };
+          code?: string;
+          message?: string;
+        };
+        if (error.response?.status === 404) {
+          setError(
+            `User "${username.trim()}" not found. Please check the username and try again.`
+          );
+        } else if (error.response?.status === 500) {
+          setError(
+            "Server error occurred. This might be due to LeetCode API issues. Please try again later."
+          );
+        } else if (error.response?.data?.error) {
+          setError(error.response.data.error);
+        } else {
+          setError(
+            `Failed to fetch user data for "${username.trim()}". Please verify the username is correct and the user's profile is public.`
+          );
+        }
+      } else if (err && typeof err === "object" && "message" in err) {
+        const error = err as { message?: string; code?: string };
+        if (
+          error.code === "NETWORK_ERROR" ||
+          error.message?.includes("Network Error")
+        ) {
+          setError(
+            "Network error. Please check your internet connection and try again."
+          );
+        } else if (error.message?.includes("timeout")) {
+          setError(
+            "Request timed out. The LeetCode servers might be slow. Please try again."
+          );
+        } else {
+          setError(
+            `Failed to fetch user data for "${username.trim()}". Please verify the username is correct and the user's profile is public.`
+          );
+        }
+      } else {
+        setError(
+          `Failed to fetch user data for "${username.trim()}". Please verify the username is correct and the user's profile is public.`
+        );
+      }
     } finally {
       setLoading(false);
     }
