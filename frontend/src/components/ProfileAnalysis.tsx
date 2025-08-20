@@ -74,7 +74,7 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
   };
 
   const phaseInfo = getPhaseProgress();
-  
+
   // Debug logging
   console.log("ProfileAnalysis - phaseInfo:", phaseInfo);
   console.log("ProfileAnalysis - progress value:", phaseInfo.progress);

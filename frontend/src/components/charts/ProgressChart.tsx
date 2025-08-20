@@ -33,33 +33,35 @@ interface ProgressChartProps {
 
 const ProgressChart = ({ submissionCalendar }: ProgressChartProps) => {
   console.log("ProgressChart - submissionCalendar:", submissionCalendar);
-  
+
   // Always use the last 30 days of data (backend now guarantees 30 days)
   // If backend provides less than 30 days, fill with zeros
   let last30Days = [];
-  
+
   if (submissionCalendar.length >= 30) {
     last30Days = submissionCalendar.slice(-30);
   } else {
     // Fill missing days with zeros if less than 30 days provided
     const today = new Date();
     last30Days = [];
-    
+
     for (let i = 29; i >= 0; i--) {
       const date = new Date();
       date.setDate(today.getDate() - i);
       const dateStr = date.toISOString().split("T")[0];
-      
+
       // Find if this date exists in the provided data
-      const existingData = submissionCalendar.find(entry => entry.date === dateStr);
-      
+      const existingData = submissionCalendar.find(
+        (entry) => entry.date === dateStr
+      );
+
       last30Days.push({
         date: dateStr,
-        count: existingData ? existingData.count : 0
+        count: existingData ? existingData.count : 0,
       });
     }
   }
-  
+
   console.log("ProgressChart - last30Days length:", last30Days.length);
   console.log("ProgressChart - first 5 days:", last30Days.slice(0, 5));
   console.log("ProgressChart - last 5 days:", last30Days.slice(-5));

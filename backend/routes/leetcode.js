@@ -270,8 +270,14 @@ const fetchLeetCodeUserData = async (username) => {
       console.log(
         `Debug - Calendar data entries: ${submissionCalendarData.length}`
       );
-      console.log(`Debug - Past 30 days data (first 5):`, submissionCalendarData.slice(0, 5));
-      console.log(`Debug - Past 30 days data (last 5):`, submissionCalendarData.slice(-5));
+      console.log(
+        `Debug - Past 30 days data (first 5):`,
+        submissionCalendarData.slice(0, 5)
+      );
+      console.log(
+        `Debug - Past 30 days data (last 5):`,
+        submissionCalendarData.slice(-5)
+      );
     } catch (calendarError) {
       console.warn(
         "Failed to process submission calendar:",
