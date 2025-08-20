@@ -1,9 +1,17 @@
 import { useState, useEffect } from "react";
-import { Search, TrendingUp, Target, Lightbulb, Trophy } from "lucide-react";
+import {
+  Search,
+  TrendingUp,
+  Target,
+  Lightbulb,
+  Trophy,
+  Activity,
+} from "lucide-react";
 import { leetcodeService, type UserStats } from "../services/api";
 import DifficultyChart from "../components/charts/DifficultyChart";
 import SkillsChart from "../components/charts/SkillsChart";
 import ProgressChart from "../components/charts/ProgressChart";
+import ActivityChart from "../components/charts/ActivityChart";
 import ProfileAnalysis from "../components/ProfileAnalysis";
 import SmartRecommendations from "../components/SmartRecommendations";
 import Container from "@mui/material/Container";
@@ -231,6 +239,20 @@ const Dashboard = () => {
                           variant="outlined"
                           size="small"
                         />
+                        <Chip
+                          icon={<Activity style={{ height: 16, width: 16 }} />}
+                          label={`${
+                            userStats.streakData?.averageSubmissionsPerDay ||
+                            "0"
+                          }/day avg`}
+                          variant="outlined"
+                          size="small"
+                          sx={{
+                            bgcolor: "success.light",
+                            color: "success.contrastText",
+                            fontWeight: 600,
+                          }}
+                        />
                       </Box>
                     </Box>
                   </Box>
@@ -334,15 +356,31 @@ const Dashboard = () => {
                   </Card>
                 </Stack>
 
-                <Card>
-                  <CardContent sx={{ p: 3 }}>
-                    <Box sx={{ height: 300 }}>
-                      <ProgressChart
-                        submissionCalendar={userStats.submissionCalendar}
-                      />
-                    </Box>
-                  </CardContent>
-                </Card>
+                <Stack direction={{ xs: "column", lg: "row" }} spacing={3}>
+                  <Card sx={{ flex: 1 }}>
+                    <CardContent sx={{ p: 3 }}>
+                      <Box sx={{ height: 300 }}>
+                        <ActivityChart
+                          submissionCalendar={userStats.submissionCalendar}
+                          averagePerDay={
+                            userStats.streakData?.averageSubmissionsPerDay ||
+                            "0"
+                          }
+                        />
+                      </Box>
+                    </CardContent>
+                  </Card>
+
+                  <Card sx={{ flex: 1 }}>
+                    <CardContent sx={{ p: 3 }}>
+                      <Box sx={{ height: 300 }}>
+                        <ProgressChart
+                          submissionCalendar={userStats.submissionCalendar}
+                        />
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Stack>
               </Stack>
 
               {/* Profile Analysis Section */}
