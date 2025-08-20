@@ -74,6 +74,11 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
   };
 
   const phaseInfo = getPhaseProgress();
+  
+  // Debug logging
+  console.log("ProfileAnalysis - phaseInfo:", phaseInfo);
+  console.log("ProfileAnalysis - progress value:", phaseInfo.progress);
+  console.log("ProfileAnalysis - color:", phaseInfo.color);
 
   return (
     <Card
@@ -314,31 +319,18 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                 sx={{
                   height: 16,
                   borderRadius: 8,
-                  bgcolor: (theme) =>
+                  backgroundColor: (theme) =>
                     theme.palette.mode === "dark"
                       ? "rgba(255, 255, 255, 0.1)"
                       : "rgba(0, 0, 0, 0.06)",
-                  position: "relative",
-                  overflow: "hidden",
                   "& .MuiLinearProgress-bar": {
                     borderRadius: 8,
-                    background: `linear-gradient(90deg, ${phaseInfo.color}60 0%, ${phaseInfo.color} 100%)`,
-                    position: "relative",
-                    "&::after": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      background:
-                        "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)",
-                      animation: "shimmer 2s infinite",
-                    },
+                    backgroundColor: `${phaseInfo.color} !important`,
+                    background: `${phaseInfo.color} !important`,
                   },
-                  "@keyframes shimmer": {
-                    "0%": { transform: "translateX(-100%)" },
-                    "100%": { transform: "translateX(100%)" },
+                  "& .MuiLinearProgress-bar1Determinate": {
+                    backgroundColor: `${phaseInfo.color} !important`,
+                    background: `${phaseInfo.color} !important`,
                   },
                 }}
               />

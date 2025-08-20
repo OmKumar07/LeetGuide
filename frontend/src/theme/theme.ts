@@ -9,7 +9,7 @@ const leetcodeColors = {
 
   // Difficulty colors
   easy: "#00AF9B",
-  medium: "#FFB800",
+  medium: "#FFD700", // Bright gold/yellow color for maximum visibility
   hard: "#FF375F",
 
   // Status colors

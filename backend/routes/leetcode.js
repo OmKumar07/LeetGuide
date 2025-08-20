@@ -235,13 +235,11 @@ const fetchLeetCodeUserData = async (username) => {
     const { currentStreak, longestStreak, totalActiveDays } =
       calculateStreaks(submissionCalendar);
 
-    // Generate submission calendar data with error handling and ensure past 7 days are always included
+    // Generate submission calendar data with error handling and ensure past 30 days are always included
     let submissionCalendarData = [];
     try {
       // Get current date for filtering recent data
       const currentDate = new Date();
-      const sevenDaysAgoForCalendar = new Date();
-      sevenDaysAgoForCalendar.setDate(currentDate.getDate() - 6); // Include today, so 7 days total
 
       // Create a map from existing submission data
       const submissionMap = new Map();
@@ -255,9 +253,9 @@ const fetchLeetCodeUserData = async (username) => {
         }
       });
 
-      // Generate past 7 days data, filling missing days with 0
+      // Generate past 30 days data, filling missing days with 0
       submissionCalendarData = [];
-      for (let i = 6; i >= 0; i--) {
+      for (let i = 29; i >= 0; i--) {
         const date = new Date();
         date.setDate(currentDate.getDate() - i);
         const dateStr = date.toISOString().split("T")[0];
@@ -272,15 +270,16 @@ const fetchLeetCodeUserData = async (username) => {
       console.log(
         `Debug - Calendar data entries: ${submissionCalendarData.length}`
       );
-      console.log(`Debug - Past 7 days data:`, submissionCalendarData);
+      console.log(`Debug - Past 30 days data (first 5):`, submissionCalendarData.slice(0, 5));
+      console.log(`Debug - Past 30 days data (last 5):`, submissionCalendarData.slice(-5));
     } catch (calendarError) {
       console.warn(
         "Failed to process submission calendar:",
         calendarError.message
       );
-      // Fallback: create 7 days of zero data
+      // Fallback: create 30 days of zero data
       submissionCalendarData = [];
-      for (let i = 6; i >= 0; i--) {
+      for (let i = 29; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         submissionCalendarData.push({
