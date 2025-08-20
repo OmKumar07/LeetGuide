@@ -36,6 +36,7 @@ const ActivityChart = ({
   submissionCalendar,
   averagePerDay,
 }: ActivityChartProps) => {
+  console.log("ActivityChart - averagePerDay:", averagePerDay);
   // Get last 30 days of data for trending
   const last30Days = submissionCalendar.slice(-30).map((entry) => ({
     ...entry,

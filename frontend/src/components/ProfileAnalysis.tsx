@@ -139,14 +139,6 @@ const ProfileAnalysis = ({ userStats }: ProfileAnalysisProps) => {
                   Active Days
                 </Typography>
               </Box>
-              <Box sx={{ textAlign: "center", minWidth: 80 }}>
-                <Typography variant="h5" fontWeight={700} color="info.main">
-                  {streakData.averageSubmissionsPerDay}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Avg/Day
-                </Typography>
-              </Box>
             </Stack>
           </Box>
 

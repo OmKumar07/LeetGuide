@@ -13,47 +13,73 @@ const calculateStreaks = (submissionCalendar) => {
   }
 
   const today = new Date();
-  const dates = Object.keys(submissionCalendar)
-    .filter((date) => submissionCalendar[date] > 0)
-    .map((date) => new Date(date * 1000))
-    .sort((a, b) => b - a);
+  today.setHours(0, 0, 0, 0); // Reset to start of day for accurate comparison
+
+  // Convert submission calendar to sorted array of dates
+  const activeDates = Object.keys(submissionCalendar)
+    .filter((timestamp) => submissionCalendar[timestamp] > 0)
+    .map((timestamp) => {
+      const date = new Date(parseInt(timestamp) * 1000);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    })
+    .sort((a, b) => b.getTime() - a.getTime()); // Sort descending (most recent first)
+
+  if (activeDates.length === 0) {
+    return { currentStreak: 0, longestStreak: 0, totalActiveDays: 0 };
+  }
 
   let currentStreak = 0;
   let longestStreak = 0;
   let tempStreak = 0;
 
-  // Calculate current streak
+  // Calculate current streak - start from today and go backwards
+  const oneDayMs = 24 * 60 * 60 * 1000;
   let checkDate = new Date(today);
-  for (let i = 0; i < dates.length; i++) {
-    const diffDays = Math.floor((checkDate - dates[i]) / (1000 * 60 * 60 * 24));
-    if (diffDays === i) {
+
+  // Check if user was active today or yesterday (allow 1-day gap)
+  let streakBroken = false;
+  for (let i = 0; i < activeDates.length; i++) {
+    const daysDiff = Math.floor(
+      (checkDate.getTime() - activeDates[i].getTime()) / oneDayMs
+    );
+
+    if (daysDiff === 0 || (daysDiff === 1 && currentStreak === 0)) {
+      // Today or yesterday (for starting streak)
       currentStreak++;
-      checkDate = new Date(checkDate.getTime() - 24 * 60 * 60 * 1000);
+      checkDate = new Date(activeDates[i].getTime() - oneDayMs);
+    } else if (daysDiff === 1) {
+      // Consecutive day
+      currentStreak++;
+      checkDate = new Date(activeDates[i].getTime() - oneDayMs);
     } else {
+      // Gap found, streak broken
       break;
     }
   }
 
-  // Calculate longest streak
-  for (let i = 0; i < dates.length - 1; i++) {
-    tempStreak = 1;
-    for (let j = i + 1; j < dates.length; j++) {
-      const diffDays = Math.floor(
-        (dates[j - 1] - dates[j]) / (1000 * 60 * 60 * 24)
-      );
-      if (diffDays === 1) {
-        tempStreak++;
-      } else {
-        break;
-      }
+  // Calculate longest streak by checking all consecutive sequences
+  tempStreak = 1;
+  for (let i = 0; i < activeDates.length - 1; i++) {
+    const daysDiff = Math.floor(
+      (activeDates[i].getTime() - activeDates[i + 1].getTime()) / oneDayMs
+    );
+
+    if (daysDiff === 1) {
+      // Consecutive days
+      tempStreak++;
+    } else {
+      // Gap found, save current streak and reset
+      longestStreak = Math.max(longestStreak, tempStreak);
+      tempStreak = 1;
     }
-    longestStreak = Math.max(longestStreak, tempStreak);
   }
+  longestStreak = Math.max(longestStreak, tempStreak);
 
   return {
     currentStreak,
     longestStreak: Math.max(longestStreak, currentStreak),
-    totalActiveDays: dates.length,
+    totalActiveDays: activeDates.length,
   };
 };
 const fetchLeetCodeUserData = async (username) => {
@@ -209,6 +235,56 @@ const fetchLeetCodeUserData = async (username) => {
     const { currentStreak, longestStreak, totalActiveDays } =
       calculateStreaks(submissionCalendar);
 
+    // Generate submission calendar data with error handling
+    let submissionCalendarData = [];
+    try {
+      submissionCalendarData = Object.entries(submissionCalendar)
+        .map(([timestamp, count]) => {
+          try {
+            return {
+              date: new Date(parseInt(timestamp) * 1000)
+                .toISOString()
+                .split("T")[0],
+              count: parseInt(count) || 0,
+            };
+          } catch (dateError) {
+            console.warn("Failed to parse date:", timestamp, dateError.message);
+            return null;
+          }
+        })
+        .filter((item) => item !== null)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+    } catch (calendarError) {
+      console.warn(
+        "Failed to process submission calendar:",
+        calendarError.message
+      );
+      submissionCalendarData = [];
+    }
+
+    // Calculate average problems per day with debug info
+    let averagePerDay = "0";
+    console.log(
+      `Debug - totalSolved: ${totalSolved}, totalActiveDays: ${totalActiveDays}, submissionCalendarData.length: ${submissionCalendarData.length}`
+    );
+
+    if (totalSolved > 0) {
+      if (totalActiveDays > 0) {
+        // Primary method: Use active days for meaningful average
+        averagePerDay = (totalSolved / totalActiveDays).toFixed(1);
+        console.log(
+          `Debug - Using active days: ${totalActiveDays}, average: ${averagePerDay}`
+        );
+      } else {
+        // Fallback: assume user has been active for at least 10 days minimum
+        averagePerDay = (totalSolved / Math.max(10, totalSolved)).toFixed(1);
+        console.log(
+          `Debug - Using minimum active days fallback, average: ${averagePerDay}`
+        );
+      }
+    }
+    console.log(`Debug - Final average: ${averagePerDay}`);
+
     // Generate skill stats based on estimated topic distribution
     let skillStats = [];
     try {
@@ -247,33 +323,6 @@ const fetchLeetCodeUserData = async (username) => {
       skillStats = [];
     }
 
-    // Generate submission calendar data with error handling
-    let submissionCalendarData = [];
-    try {
-      submissionCalendarData = Object.entries(submissionCalendar)
-        .map(([timestamp, count]) => {
-          try {
-            return {
-              date: new Date(parseInt(timestamp) * 1000)
-                .toISOString()
-                .split("T")[0],
-              count: parseInt(count) || 0,
-            };
-          } catch (dateError) {
-            console.warn("Failed to parse date:", timestamp, dateError.message);
-            return null;
-          }
-        })
-        .filter((item) => item !== null)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-    } catch (calendarError) {
-      console.warn(
-        "Failed to process submission calendar:",
-        calendarError.message
-      );
-      submissionCalendarData = [];
-    }
-
     const result = {
       username: userData.username || "Unknown",
       totalSolved,
@@ -291,10 +340,7 @@ const fetchLeetCodeUserData = async (username) => {
         currentStreak,
         longestStreak,
         totalActiveDays,
-        averageSubmissionsPerDay:
-          totalActiveDays > 0
-            ? (totalSolved / totalActiveDays).toFixed(1)
-            : "0",
+        averageSubmissionsPerDay: averagePerDay,
       },
 
       // Language proficiency with safety check

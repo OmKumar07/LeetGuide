@@ -241,10 +241,18 @@ const Dashboard = () => {
                         />
                         <Chip
                           icon={<Activity style={{ height: 16, width: 16 }} />}
-                          label={`${
-                            userStats.streakData?.averageSubmissionsPerDay ||
-                            "0"
-                          }/day avg`}
+                          label={`${(() => {
+                            const avgValue =
+                              userStats.streakData?.averageSubmissionsPerDay ||
+                              "0";
+                            console.log(
+                              "Dashboard chip - avgValue:",
+                              avgValue,
+                              "streakData:",
+                              userStats.streakData
+                            );
+                            return avgValue;
+                          })()}/day avg`}
                           variant="outlined"
                           size="small"
                           sx={{
