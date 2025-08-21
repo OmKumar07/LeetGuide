@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:vite-only": "vite build",
-    "build:netlify": "vite build",
+    "build": "npx vite build",
+    "build:vite-only": "npx vite build",
+    "build:netlify": "npx vite build",
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview"
