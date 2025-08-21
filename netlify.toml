@@ -1,6 +1,1 @@
-# Netlify configuration removed - configure manually through Netlify UI
-# Use these settings in Netlify UI:
-# Build command: cd frontend && npm ci && npm run build
-# Publish directory: frontend/dist
-# Base directory: (leave empty)
-# Node version: 18 or 20
+
