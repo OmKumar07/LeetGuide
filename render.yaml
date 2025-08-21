@@ -4,13 +4,14 @@ services:
     name: leetguide-backend
     env: node
     plan: starter
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3001
+        value: 10000
       - key: CORS_ORIGIN
-        value: https://leetguide.netlify.app,https://leetguide.com
+        value: https://leetguide-app.netlify.app,https://leetguide.netlify.app,https://leetguide.com
     healthCheckPath: /health
