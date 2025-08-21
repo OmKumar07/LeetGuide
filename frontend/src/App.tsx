@@ -4,17 +4,23 @@ import { ThemeContextProvider } from "./theme/ThemeContext";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Compare from "./pages/Compare";
+import SEOHead from "./components/SEO/SEOHead";
+import { generateStructuredData } from "./utils/seo";
 import Box from "@mui/material/Box";
 
 function App() {
   useEffect(() => {
-    // Set the default title
-    document.title = "LeetGuide - LeetCode Analytics Dashboard";
+    // SEO component will handle title updates
+    // Remove the direct document.title setting as SEOHead will manage it
   }, []);
 
   return (
     <ThemeContextProvider>
       <Router>
+        <SEOHead
+          structuredData={generateStructuredData.website()}
+          url="https://leetguide.com"
+        />
         <Box
           sx={{
             minHeight: "100vh",
@@ -22,7 +28,7 @@ function App() {
           }}
         >
           <Navbar />
-          <Box component="main">
+          <Box component="main" id="main-content">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/compare" element={<Compare />} />

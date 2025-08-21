@@ -1,29 +1,116 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 
 <head>
   <meta charset="UTF-8" />
-  <!-- Favicon for modern browsers -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <!-- Fallback favicon for older browsers -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.svg" />
-  <!-- Apple touch icon -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
+
+  <!-- Basic SEO Meta Tags -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-    content="LeetGuide - Your personal LeetCode analytics dashboard with progress tracking, performance insights, and AI-powered problem recommendations" />
-  <meta name="keywords" content="LeetCode, coding, algorithms, data structures, programming, analytics, dashboard" />
-  <meta name="author" content="LeetGuide" />
-  <meta name="theme-color" content="#1976d2" />
+    content="LeetGuide - Advanced LeetCode analytics dashboard with real-time progress tracking, performance insights, difficulty analysis, and AI-powered problem recommendations. Track your coding journey with detailed statistics and personalized learning paths." />
+  <meta name="keywords"
+    content="LeetCode analytics, coding progress tracker, algorithm practice, data structures, programming dashboard, leetcode stats, coding interview prep, problem solving tracker, competitive programming, software engineering practice, coding analytics, leetcode insights, programming metrics, algorithm analysis, coding performance" />
+  <meta name="author" content="LeetGuide Team" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="language" content="English" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="distribution" content="global" />
+  <meta name="rating" content="general" />
+
+  <!-- Open Graph / Facebook Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://leetguide.com/" />
+  <meta property="og:title" content="LeetGuide - Advanced LeetCode Analytics Dashboard" />
+  <meta property="og:description"
+    content="Track your LeetCode progress with advanced analytics, performance insights, and AI-powered recommendations. Get detailed statistics on your coding journey and improve your problem-solving skills." />
+  <meta property="og:image" content="https://leetguide.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="LeetGuide Dashboard - LeetCode Analytics and Progress Tracking" />
+  <meta property="og:site_name" content="LeetGuide" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://leetguide.com/" />
+  <meta name="twitter:title" content="LeetGuide - Advanced LeetCode Analytics Dashboard" />
+  <meta name="twitter:description"
+    content="Track your LeetCode progress with advanced analytics, performance insights, and AI-powered recommendations." />
+  <meta name="twitter:image" content="https://leetguide.com/twitter-card.png" />
+  <meta name="twitter:image:alt" content="LeetGuide Dashboard Screenshot" />
+  <meta name="twitter:creator" content="@leetguide" />
+  <meta name="twitter:site" content="@leetguide" />
+
+  <!-- Additional SEO Meta Tags -->
+  <meta name="application-name" content="LeetGuide" />
+  <meta name="apple-mobile-web-app-title" content="LeetGuide" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#FFA116" />
+  <meta name="msapplication-TileColor" content="#FFA116" />
+  <meta name="msapplication-config" content="/browserconfig.xml" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://leetguide.com/" />
+
+  <!-- Favicon and Icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#FFA116" />
+
   <!-- Web App Manifest -->
   <link rel="manifest" href="/manifest.json" />
-  <title>LeetGuide - LeetCode Analytics Dashboard</title>
+
+  <!-- Preconnect to external domains for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//leetcode.com">
+
+  <!-- Structured Data for better search results -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "LeetGuide",
+      "description": "Advanced LeetCode analytics dashboard with real-time progress tracking, performance insights, and AI-powered problem recommendations",
+      "url": "https://leetguide.com",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "LeetGuide Team"
+      },
+      "sameAs": [
+        "https://github.com/OmKumar07/LeetGuide"
+      ]
+    }
+  </script>
+
+  <title>LeetGuide - Advanced LeetCode Analytics Dashboard | Track Your Coding Progress</title>
 </head>
 
 <body>
+  <!-- Skip to main content for accessibility -->
+  <a href="#main-content" class="sr-only">Skip to main content</a>
+
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Performance and Analytics (placeholder for future implementation) -->
+  <noscript>
+    <div style="text-align: center; padding: 50px;">
+      <h1>LeetGuide - LeetCode Analytics Dashboard</h1>
+      <p>Please enable JavaScript to use LeetGuide's advanced analytics features.</p>
+    </div>
+  </noscript>
 </body>
 
 </html>

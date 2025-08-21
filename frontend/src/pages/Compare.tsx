@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Search, GitCompare, TrendingUp, Users, BarChart3 } from "lucide-react";
 import { leetcodeService, type ComparisonData } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
+import SEOHead from "../components/SEO/SEOHead";
+import { generateStructuredData } from "../utils/seo";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -22,14 +24,6 @@ const Compare = () => {
     null
   );
   const [error, setError] = useState<string | null>(null);
-
-  // Set page title
-  useEffect(() => {
-    document.title = "Compare Users - LeetGuide";
-    return () => {
-      document.title = "LeetGuide - LeetCode Analytics Dashboard";
-    };
-  }, []);
 
   const handleCompare = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +66,32 @@ const Compare = () => {
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
+      <SEOHead
+        title={
+          comparisonData
+            ? `Compare ${comparisonData.user1.username} vs ${comparisonData.user2.username}`
+            : "Compare LeetCode Users"
+        }
+        description={
+          comparisonData
+            ? `Compare LeetCode progress between ${comparisonData.user1.username} (${comparisonData.user1.totalSolved} solved) and ${comparisonData.user2.username} (${comparisonData.user2.totalSolved} solved). See detailed performance analysis and statistics.`
+            : "Compare two LeetCode users side by side. Analyze their progress, performance statistics, difficulty distribution, and solve rates with detailed comparison charts."
+        }
+        keywords={[
+          "leetcode comparison",
+          "user comparison",
+          "coding comparison",
+          "programming contest",
+          "algorithm comparison",
+        ]}
+        type="website"
+        url={
+          comparisonData
+            ? `https://leetguide.com/compare?user1=${comparisonData.user1.username}&user2=${comparisonData.user2.username}`
+            : "https://leetguide.com/compare"
+        }
+        structuredData={generateStructuredData.website()}
+      />
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
           {/* Header */}

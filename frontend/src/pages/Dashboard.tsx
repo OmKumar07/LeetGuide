@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Search,
   TrendingUp,
@@ -14,6 +14,8 @@ import ProgressChart from "../components/charts/ProgressChart";
 import ActivityChart from "../components/charts/ActivityChart";
 import ProfileAnalysis from "../components/ProfileAnalysis";
 import SmartRecommendations from "../components/SmartRecommendations";
+import SEOHead from "../components/SEO/SEOHead";
+import { generateStructuredData } from "../utils/seo";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -33,14 +35,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Set page title
-  useEffect(() => {
-    document.title = "Dashboard - LeetGuide";
-    return () => {
-      document.title = "LeetGuide - LeetCode Analytics Dashboard";
-    };
-  }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,6 +112,53 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
+      <SEOHead
+        title={userStats ? `${userStats.username} Dashboard` : "Dashboard"}
+        description={
+          userStats
+            ? `Analyze ${userStats.username}'s LeetCode progress: ${userStats.totalSolved} problems solved, ${userStats.acceptanceRate} acceptance rate, ranking ${userStats.ranking}.`
+            : "Analyze your LeetCode progress with comprehensive statistics, difficulty breakdown, skill analysis, and personalized recommendations."
+        }
+        keywords={[
+          "leetcode dashboard",
+          "coding statistics",
+          "algorithm analysis",
+          "programming progress",
+        ]}
+        type={userStats ? "profile" : "website"}
+        username={userStats?.username}
+        userStats={
+          userStats
+            ? {
+                username: userStats.username,
+                totalSolved: userStats.totalSolved,
+                ranking: userStats.ranking,
+                acceptanceRate: userStats.acceptanceRate,
+                easySolved: userStats.easySolved,
+                mediumSolved: userStats.mediumSolved,
+                hardSolved: userStats.hardSolved,
+              }
+            : undefined
+        }
+        url={
+          userStats
+            ? `https://leetguide.com/dashboard?user=${userStats.username}`
+            : "https://leetguide.com/dashboard"
+        }
+        structuredData={
+          userStats
+            ? generateStructuredData.profile(userStats.username, {
+                username: userStats.username,
+                totalSolved: userStats.totalSolved,
+                ranking: userStats.ranking,
+                acceptanceRate: userStats.acceptanceRate,
+                easySolved: userStats.easySolved,
+                mediumSolved: userStats.mediumSolved,
+                hardSolved: userStats.hardSolved,
+              })
+            : generateStructuredData.website()
+        }
+      />
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
           {/* Header */}

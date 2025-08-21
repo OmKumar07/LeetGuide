@@ -1,0 +1,16 @@
+# Render Blueprint for LeetGuide Backend
+services:
+  - type: web
+    name: leetguide-backend
+    env: node
+    plan: starter
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: CORS_ORIGIN
+        value: https://leetguide.netlify.app,https://leetguide.com
+    healthCheckPath: /health
