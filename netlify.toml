@@ -1,11 +1,12 @@
 # Netlify Configuration for LeetGuide Frontend
 [build]
-  publish = "frontend/dist"
-  command = "cd frontend && npm ci && npm run build"
+  base = "frontend"
+  publish = "dist"
+  command = "npm ci && npm run build"
 
 [build.environment]
-  NODE_VERSION = "18"
-  NPM_VERSION = "9"
+  NODE_VERSION = "20"
+  NPM_VERSION = "10"
 
 # Frontend redirects for SPA routing
 [[redirects]]
